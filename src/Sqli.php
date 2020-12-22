@@ -1,6 +1,6 @@
 <?php
 
-namespace stilmark\database;
+namespace Stilmark\Database;
 
 class Sqli
 {

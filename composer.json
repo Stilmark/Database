@@ -3,7 +3,7 @@
     "description": "PHP/Mysqli database connection and query builder.",
     "type": "package",
     "require": {
-        "php": "5.3.0"
+        "php": "^7"
     },
     "license": "MIT",
     "authors": [
@@ -16,7 +16,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "stilmark\\database\\": "src/"
+            "Stilmark\\Database\\": "src/"
         }
     }
 }
