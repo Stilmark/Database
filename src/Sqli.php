@@ -8,7 +8,8 @@ class Sqli
     function __construct()
 	{
         $this->result = [];
-        $this->db_connection = mysqli_connect(HOST, USERNAME, PASSWORD, DATABASE);
+
+        $this->db_connection = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
 
         if ($this->db_connection->connect_error) {
             die('Database error: ' . $this->db_connection->connect_error);
@@ -19,7 +20,7 @@ class Sqli
 
     function query($sql)
     {
-        $this->result = [];
+        // $this->result = [];
         return $this->db_connection->query($sql);
     }
 
@@ -63,11 +64,11 @@ class Sqli
         }
     }
 
-    function listId($sql)
+    function listId($sql, $key = 'id')
     {
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
-                $this->result[$row['id']] = $row;
+                $this->result[$row[$key]] = $row;
             }
             $query->free();
             return $this->result;
@@ -76,18 +77,17 @@ class Sqli
         }
     }
 
-    function groupId($sql)
+    function groupId($sql, $key = 'id')
     {
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
-                $this->result[$row['id']][] = $row;
+                $this->result[$row[$key]][] = $row;
             }
             $query->free();
             return $this->result;
         } else {
             return $this->invalidQuery('groupId', $sql);
         }
-
     }
 
     function verbose($sql) {

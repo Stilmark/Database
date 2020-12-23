@@ -3,7 +3,8 @@
     "description": "PHP/Mysqli database connection and query builder.",
     "type": "package",
     "require": {
-        "php": "^7"
+        "php": "^7",
+        "symfony/dotenv": "5.x-dev"
     },
     "license": "MIT",
     "authors": [
