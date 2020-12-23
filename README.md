@@ -1,8 +1,8 @@
-# Stilmark Database #
+# Database #
 
-This package contains the class **sqli()** for querying the database and returning results and a query builder or abstraction layer **dba()**.
+This package contains the class **sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **dba()** makes it possible to generate queries with a cleaner code.
 
-# Sqli() #
+# Sqli() Class #
 
 **Sqli** connection credentials should be passed using `$_ENV` variables: DB_HOST, DB_DATABASE,  DB_USERNAME, DB_PASSWORD. These can be stored in the projects `.env` file, a sample file `.env-sample` contains the required variables - edit and rename the file.
 
