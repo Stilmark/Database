@@ -22,7 +22,43 @@ Request a single row.
 Result:
 
 ```json
-{"id":"1","firstName":"Hans","lastName":"Gruber","email":"hans@gruber.com"}
+{
+  "id": "1",
+  "firstName": "Hans",
+  "lastName": "Gruber",
+  "email": "hans@gruber.com"
+}
+```
+
+### list() ###
+
+Request multiple rows.
+
+	$user = $sqli->list('SELECT * FROM users');
+	
+Result:
+
+```json
+[
+  {
+    "id": "1",
+    "firstName": "Hans",
+    "lastName": "Gruber",
+    "email": "hans@gruber.com"
+  },
+  {
+    "id": "2",
+    "firstName": "Lars",
+    "lastName": "Ulrich",
+    "email": "lars@metal.com"
+  },
+  {
+    "id": "3",
+    "firstName": "Hans",
+    "lastName": "Nickerdorph",
+    "email": "hans@nick.com"
+  }
+]
 ```
 
 
@@ -35,5 +71,10 @@ Rquest the keys contained in the query.
 Result:
 
 ```json
-["id","firstName","lastName","email"]
+[
+  "id",
+  "firstName",
+  "lastName",
+  "email"
+]
 ```
