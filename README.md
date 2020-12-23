@@ -1,3 +1,7 @@
+# Stilmark Database #
+
+This package contains the class **sqli()** for querying the database and returning results and a query builder or abstraction layer **dba()**.
+
 # Sqli() #
 
 **Sqli** connection credentials should be passed using `$_ENV` variables: DB_HOST, DB_DATABASE,  DB_USERNAME, DB_PASSWORD. These can be stored in the projects `.env` file, a sample file `.env-sample` contains the required variables - edit and rename the file.
@@ -9,9 +13,9 @@
 
 	$sqli = new Sqli();
 
-## Sqli methods ##
+## Sqli Request Methods ##
 
-You can request and query the database using SQL statements and format the output using these methods.
+You can request rows from the database using SQL statements and format the output using these methods.
 
 ### row( $sql ) ###
 
@@ -61,9 +65,9 @@ Result:
 ]
 ```
 
-### listId( $sql [, $key ] ) ###
+### listId( $sql [, $key = 'id' ] ) ###
 
-Request multiple rows indexed by key value.
+Request multiple rows indexed by key value. The default key is `id`.
 
 	$users = $sqli->listId('SELECT * FROM users LIMIT 2');
 
@@ -90,9 +94,9 @@ Result:
 }
 ```
 
-### groupId( $sql [, $key ] ) ###
+### groupId( $sql [, $key = 'id' ] ) ###
 
-Request multiple rows indexed by key value.
+Request multiple rows indexed by key value. The default key is `id`.
 
 	$users = $sqli->groupId('SELECT * FROM users');
 
@@ -129,9 +133,9 @@ Result:
 }
 ```
 
-### keys() ###
+### keys( $sql ) ###
 
-Rquest the keys contained in the query.
+Request the keys contained in the query.
 
 	$user = $sqli->keys('SELECT * FROM users');
 	
@@ -145,3 +149,54 @@ Result:
   "email"
 ]
 ```
+
+### values( $sql ) ###
+
+Request only the values of the first row in the query.
+
+	$user = $sqli->values('SELECT * FROM users');
+	
+Result:
+
+```json
+[
+  "1",
+  "Hans",
+  "Gruber",
+  "hans@gruber.com"
+]
+```
+
+## Sqli Query Methods ##
+
+You can query the database using SQL statements using these methods.
+
+### query( $sql ) ###
+
+Execute the query. Returns true if the query was successful or reversely false.
+
+	$user = $sqli->query('UPDATE users SET email = "hans@nickol.com" WHERE id=3');
+	
+Result:
+
+	true
+
+### affected_rows() ###
+
+Return the number of rows changed with the latest query.
+
+	$affected_rows = $sqli->affected_rows();
+	
+Result:
+
+	1
+	
+### info() ###
+
+Return info about the latest query.
+
+	$info = $sqli->info();
+
+Result:
+
+	"Rows matched: 1  Changed: 1  Warnings: 0"
