@@ -5,10 +5,10 @@ namespace Stilmark\Database;
 class Sqli
 {
 
-	function __construct()
+    function __construct()
 	{
         $this->result = [];
-        $this->db_connection = mysqli_connect(HOST, DBUSER, DBPASS, DATABASE);
+        $this->db_connection = mysqli_connect(HOST, USERNAME, PASSWORD, DATABASE);
 
         if ($this->db_connection->connect_error) {
             die('Database error: ' . $this->db_connection->connect_error);
