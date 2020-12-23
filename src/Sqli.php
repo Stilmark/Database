@@ -8,20 +8,20 @@ class Sqli
     function __construct()
 	{
         $this->result = [];
+        $this->mysqli = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
 
-        $this->db_connection = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
+        // $this->db_connection = mysqli_connect();
 
-        if ($this->db_connection->connect_error) {
-            die('Database error: ' . $this->db_connection->connect_error);
+        if ($this->mysqli->connect_error) {
+            die('Database error: ' . $this->mysqli->connect_error);
         }
 
-        $this->db_connection->set_charset('utf8');
+        $this->mysqli->set_charset('utf8');
 	}
 
     function query($sql)
     {
-        // $this->result = [];
-        return $this->db_connection->query($sql);
+        return $this->mysqli->query($sql);
     }
 
     function row($sql)
@@ -90,23 +90,28 @@ class Sqli
         }
     }
 
-    function verbose($sql) {
+    function verbose($sql)
+    {
         return $sql;
     }
 
-    function insert_id() {
-        return $this->db_connection->insert_id;
+    function insert_id()
+    {
+        return $this->mysqli->insert_id;
     }
 
-    function affected_rows() {
-        return $this->db_connection->affected_rows;
+    function affected_rows()
+    {
+        return $this->mysqli->affected_rows;
     }
 
-    function invalidQuery($type, $sql) {
+    function invalidQuery($type, $sql)
+    {
         die('Invalid query ('.$type.'): ' . $sql);
     }
 
-    function val($value) {
+    function val($value)
+    {
         // Quote if not a number or a numeric string
         if (!$this->isDecimalNumber($value)) {
            $value = "'" .$this->real_escape_string($value). "'";
@@ -114,12 +119,24 @@ class Sqli
         return $value;
     }
 
-    function isDecimalNumber($n) {
+    function isDecimalNumber($n)
+    {
         return (string)(float)$n === (string)$n;
     }
 
-    static function instance() {
+    static function instance()
+    {
         return new sqli();
+    }
+
+    function info()
+    {
+        return $this->mysqli->info;
+    }
+
+    function close()
+    {
+        $this->mysqli->close();
     }
 
 }
