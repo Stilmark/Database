@@ -13,7 +13,7 @@
 
 You can request and query the database using SQL statements and format the output using these methods.
 
-### row() ###
+### row( $sql ) ###
 
 Request a single row.
 
@@ -30,11 +30,11 @@ Result:
 }
 ```
 
-### list() ###
+### list( $sql ) ###
 
 Request multiple rows.
 
-	$user = $sqli->list('SELECT * FROM users');
+	$users = $sqli->list('SELECT * FROM users');
 	
 Result:
 
@@ -61,6 +61,73 @@ Result:
 ]
 ```
 
+### listId( $sql [, $key ] ) ###
+
+Request multiple rows indexed by key value.
+
+	$users = $sqli->listId('SELECT * FROM users LIMIT 2');
+
+A specific key can also be supplied.
+
+	$users = $sqli->listId('SELECT * FROM users LIMIT 2', 'email');
+
+Result:
+
+```json
+{
+  "hans@gruber.com": {
+    "id": "1",
+    "firstName": "Hans",
+    "lastName": "Gruber",
+    "email": "hans@gruber.com"
+  },
+  "lars@metal.com": {
+    "id": "2",
+    "firstName": "Lars",
+    "lastName": "Ulrich",
+    "email": "lars@metal.com"
+  }
+}
+```
+
+### groupId( $sql [, $key ] ) ###
+
+Request multiple rows indexed by key value.
+
+	$users = $sqli->groupId('SELECT * FROM users');
+
+A specific key can also be supplied.
+
+	$users = $sqli->groupId('SELECT * FROM users', 'firstName');
+
+Result:
+
+```json
+{
+  "Hans": [
+    {
+      "id": "1",
+      "firstName": "Hans",
+      "lastName": "Gruber",
+      "email": "hans@gruber.com"
+    },
+    {
+      "id": "3",
+      "firstName": "Hans",
+      "lastName": "Nickerdorph",
+      "email": "hans@nick.com"
+    }
+  ],
+  "Lars": [
+    {
+      "id": "2",
+      "firstName": "Lars",
+      "lastName": "Ulrich",
+      "email": "lars@metal.com"
+    }
+  ]
+}
+```
 
 ### keys() ###
 
