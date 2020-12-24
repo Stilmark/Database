@@ -2,7 +2,7 @@
 
 This package contains the class **Sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **Dba()** makes it possible to generate queries with a cleaner code.
 
-Where **Sqli** accepts an SQL statement as a variable, **Dba()** allows you to create a query and format the result list using chained methods. The following queries would return the same results.
+Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to build a query programatically using chained methods. The following queries would return the same results.
 
 	$sqli->list( 'SELECT * FROM users' );
 
@@ -12,16 +12,67 @@ Where **Sqli** accepts an SQL statement as a variable, **Dba()** allows you to c
 
 	composer require stilmark/database
 	
+Database connection credentials should be passed using `$_ENV` variables: DB_HOST, DB_DATABASE,  DB_USERNAME, DB_PASSWORD. These can ideally be stored in the project's `.env` file, a sample file `.env-sample` contains the required variables - edit and rename the file.
 
-# Sqli() Class #
+	DB_HOST=127.0.0.1
+	DB_DATABASE=test
+	DB_USERNAME=test
+	DB_PASSWORD=test
 
-**Sqli** connection credentials should be passed using `$_ENV` variables: DB_HOST, DB_DATABASE,  DB_USERNAME, DB_PASSWORD. These can be stored in the projects `.env` file, a sample file `.env-sample` contains the required variables - edit and rename the file.
+# Usage #
 
-	require('vendor/autoload.php');
+## Dba() ##
 
-	use Symfony\Component\Dotenv\Dotenv;
+Use the Dba() class to build database queries programatically.
+
+	use Stilmark\Database\Dba;
+	
+	$db = new Dba();
+
+## Dba Set Methods ##
+
+### table( *string* ) ###
+
+Set the name of the table to query.
+
+	$db->table('users');
+
+### columns( *string* | *array* ) ###
+
+Select which columns to return. Can be a single string or an array of strings.
+
+	$db->columns('email');
+	
+	$db->columns(['id', 'email']);
+
+## Dba Request Methods ##
+
+You can request rows from the database by building queries programatically and format the output using these methods.
+
+### row() ###
+
+Request a single row.
+
+	$user = $db->table('users')->row();
+	
+Result:
+
+```json
+{
+  "id": "1",
+  "firstName": "Hans",
+  "lastName": "Gruber",
+  "email": "hans@gruber.com"
+}
+```
+
+
+## Sqli() ##
+
+Use the Sqli() class to execute SQL statements.
+
 	use Stilmark\Database\Sqli;
-
+	
 	$sqli = new Sqli();
 
 ## Sqli Request Methods ##
