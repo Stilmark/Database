@@ -110,12 +110,13 @@ class Sqli
         die('Invalid query ('.$type.'): ' . $sql);
     }
 
-    function val($value)
+    function val($value, $isString = false)
     {
         // Quote if not a number or a numeric string
-        if (!$this->isDecimalNumber($value)) {
-           $value = "'" .$this->real_escape_string($value). "'";
+        if ($isString || !$this->isDecimalNumber($value)) {
+            $value = "'" .$this->real_escape_string($value). "'";
         }
+
         return $value;
     }
 

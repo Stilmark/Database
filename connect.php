@@ -3,10 +3,17 @@
 require('vendor/autoload.php');
 
 use Symfony\Component\Dotenv\Dotenv;
-use Stilmark\Database\Sqli;
+use Stilmark\Database\Dba;
 
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
+
+$db= new Dba();
+
+$users = $db->table('users')->columns('firstName')->where(['id' => 3])->list();
+echo json_encode($users).PHP_EOL;
+
+/*
 
 $sqli= new Sqli();
 $users = $sqli->query('UPDATE users SET email = "hans@nicksport.com" WHERE id=3');
@@ -17,3 +24,5 @@ echo 'rows: '.$rows.PHP_EOL;
 
 $info = $sqli->info();
 echo json_encode($info).PHP_EOL;
+
+*/
