@@ -39,11 +39,24 @@ Set the name of the table to query.
 
 ### columns( *string* | *array* ) ###
 
-Select which columns to return. Can be a single string or an array of strings.
+Select which columns to return. Can be a single column or an array of columns.
 
 	$db->columns('email');
 	
 	$db->columns(['id', 'email']);
+
+### where( *array* ) ###
+
+Filter the query using an array of keys and values. For example `WHERE id = 1` 
+
+	$db->where(['id' => 1]);
+
+or `WHERE id IN (1,2)`
+
+	$db->where(['id' => [1,2]]);
+
+or ...
+
 
 ## Dba Request Methods ##
 
