@@ -1,6 +1,17 @@
 # Database #
 
-This package contains the class **sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **dba()** makes it possible to generate queries with a cleaner code.
+This package contains the class **Sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **Dba()** makes it possible to generate queries with a cleaner code.
+
+Where **Sqli** accepts an SQL statement as a variable, **Dba()** allows you to create a query and format the result list using chained methods. The following queries would return the same results.
+
+	$sqli->list( 'SELECT * FROM users' );
+
+	$db->table('users')->list();
+
+## Install using composer ##
+
+	composer require stilmark/database
+	
 
 # Sqli() Class #
 
