@@ -2,6 +2,8 @@
 
 This package contains the class **Sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **Dba()** makes it possible to generate queries with a cleaner code.
 
+## Quick reference ##
+
 Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to build a query programatically using chained methods. The following queries would return the same results.
 
 	$sqli->list( 'SELECT * FROM users' );
@@ -21,78 +23,10 @@ Database connection credentials should be passed using `$_ENV` variables: DB_HOS
 
 # Usage #
 
-## Dba() ##
+- [Dba Class](https://github.com/Stilmark/Database/wiki/Dba-Class)
+- [Dba Class Set Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Set-Methods)
 
-Use the Dba() class to build database queries programatically.
 
-	use Stilmark\Database\Dba;
-	
-	$db = new Dba();
-
-## Dba Set Methods ##
-
-### table( *string* ) ###
-
-Set the name of the table to query.
-
-	$db->table('users');
-
-### columns( *string* | *array* ) ###
-
-Select which columns to return. Can be a single column or an array of columns.
-
-	$db->columns('email');
-	
-	$db->columns(['id', 'email']);
-
-### where( *array* ) ###
-
-Filter the query using an array of keys and values. For example `WHERE id = 1` 
-
-	$db->where(['id' => 1]);
-
-or `WHERE id IN (1,2)`
-
-	$db->where(['id' => [1,2]]);
-
-or Mysql functions like CURDATE(), DATE_SUB() `WHERE created = CURDATE()`
-
-	$db->where(['created' => 'CURDATE()']);
-	
-or using operators in combination with the column key (seperated by colon) `WHERE id >= 1` or `WHERE email LIKE '%.com'`
-
-	$db->where(['id : >=' => 1]);
-	
-	$db->where(['email : like' => '%.com']);
-
-Supported operators `=, <, >, <=, >=, LIKE`
-
-### orderBy( *string* | *array* ) ###
-
-Sort the results by one or more columns including sort order `ORDER BY created DESC`.
-
-	$db->orderBy('created DESC');
-	
-	$db->orderBy(['firstName', 'created DESC'])
-
-### groupBy( *string* | *array* ) ###
-
-Group rows by columns. `SELECT category, count(id) count FROM users GROUP BY category`
-
-	$users = $db->table('users')->columns(['category', 'count(id) count'])->groupBy('category')->list();
-
-```json
-[
-  {
-    "category": "client",
-    "count": "2"
-  },
-  {
-    "category": "partner",
-    "count": "1"
-  }
-]
-```
 
 ## Dba Request Methods ##
 
