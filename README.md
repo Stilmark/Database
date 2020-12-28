@@ -88,6 +88,30 @@ Result:
 }
 ```
 
+### list() ###
+
+Request multiple rows.
+
+	$users = $db->table('users')->where(['id : >' => 1])->list();
+	
+Result:
+
+```json
+[
+  {
+    "id": "2",
+    "firstName": "Lars",
+    "lastName": "Ulrich",
+    "email": "lars@metal.com"
+  },
+  {
+    "id": "3",
+    "firstName": "Hans",
+    "lastName": "Nickerdorph",
+    "email": "hans@nick.com"
+  }
+]
+```
 
 ## Sqli() ##
 
