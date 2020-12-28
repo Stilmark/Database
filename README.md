@@ -55,8 +55,17 @@ or `WHERE id IN (1,2)`
 
 	$db->where(['id' => [1,2]]);
 
-or ...
+or Mysql functions like CURDATE(), DATE_SUB() `WHERE created = CURDATE()`
 
+	$db->where(['created' => 'CURDATE()']);
+	
+or using operators in combination with the column key (seperated by colon) `WHERE id >= 1` or `WHERE email LIKE '%.com'`
+
+	$db->where(['id : >=' => 1]);
+	
+	$db->where(['email : like' => '%.com']);
+
+Supported operators `=, <, >, <=, >=, LIKE`
 
 ## Dba Request Methods ##
 
