@@ -10,7 +10,8 @@ $dotenv->load(__DIR__.'/.env');
 
 $db= new Dba();
 
-$users = $db->table('users')->where(['email : like' => '%.com', 'id : >' => 2])->list();
+$users = $db->table('users')->columns(['category', 'count(id) count'])->groupBy('category')->list();
+// SELECT category, count(id) count FROM users GROUP BY category;
 echo json_encode($users).PHP_EOL;
 
 /*

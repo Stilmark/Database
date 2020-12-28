@@ -67,6 +67,9 @@ class Dba
 
     function groupBy($groupBy = [])
     {
+        if (!is_array($groupBy)) {
+            $groupBy = [$groupBy];
+        }
         $this->groupBy = $groupBy;
         return $this;
     }
