@@ -114,7 +114,7 @@ class Sqli
     {
         // Quote if not a number or a numeric string
         if ($isString || !$this->isDecimalNumber($value)) {
-            $value = "'" .$this->real_escape_string($value). "'";
+            $value = "'" .$this->mysqli->real_escape_string($value). "'";
         }
 
         return $value;

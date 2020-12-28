@@ -35,18 +35,18 @@ class Dba
         return $this;
     }
 
-    function values($values = [])
-    {
-        $this->values = $values;
-        return $this;
-    }
-
     function columns($columns = [])
     {
         if (!is_array($columns)) {
             $columns = [$columns];
         }
         $this->columns = $columns;
+        return $this;
+    }
+
+    function values($values = [])
+    {
+        $this->values = $values;
         return $this;
     }
 
@@ -159,12 +159,25 @@ class Dba
         foreach($this->where AS $key => $value) {
         	if (!is_array($value)) {
 
-	            if (!in_array($value, ['NOW()','CURDATE()'])) {
-	                $value = $this->sqli->val($value);
-	            }
+	        	if (strpos($key, ':')) {
+	        		$arg = explode(':',$key);
+	        		if (count($arg) == 2) {
+	        			$key = trim($arg[0]);
+	        			$operator = strtoupper(trim($arg[1]));
+	        		}
+	        	}
 
-                $operator = (strpos($value, '%') !== false) ? ' LIKE ':'=';
-            	$where[] = (!strpos($value, '.') ? $this->table.'.':'').$key.$operator.$value;
+	        	if (!isset($operator)) {
+	        		$operator = '=';
+	        	}
+
+    			if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE'])) {
+		            if (!preg_match('/^[a-z_]+\(.*\)$/i', $value)) {
+		                $value = $this->sqli->val($value);
+		            }
+    			}
+
+            	$where[] = (!strpos($value, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
             } else {
             	$where[] = $this->table.'.'.$key.' IN ('.implode(',', $value).')';
             }

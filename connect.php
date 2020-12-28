@@ -10,7 +10,7 @@ $dotenv->load(__DIR__.'/.env');
 
 $db= new Dba();
 
-$users = $db->table('users')->columns('firstName')->where(['id' => 3])->list();
+$users = $db->table('users')->where(['email : like' => '%.com', 'id : >' => 2])->list();
 echo json_encode($users).PHP_EOL;
 
 /*
