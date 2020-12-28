@@ -14,14 +14,9 @@ Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to
 
 	composer require stilmark/database
 	
-Database connection credentials should be passed using `$_ENV` variables: DB_HOST, DB_DATABASE,  DB_USERNAME, DB_PASSWORD. These can ideally be stored in the project's `.env` file, a sample file `.env-sample` contains the required variables - edit and rename the file.
-
-	DB_HOST=127.0.0.1
-	DB_DATABASE=test
-	DB_USERNAME=test
-	DB_PASSWORD=test
-
 # Usage #
+
+- [Configure](https://github.com/Stilmark/Database/wiki/Configure)
 
 - [Dba Class](https://github.com/Stilmark/Database/wiki/Dba-Class)
 - [Dba Class Set Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Set-Methods)
