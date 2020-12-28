@@ -67,6 +67,33 @@ or using operators in combination with the column key (seperated by colon) `WHER
 
 Supported operators `=, <, >, <=, >=, LIKE`
 
+### orderBy( *string* | *array* ) ###
+
+Sort the results by one or more columns including sort order `ORDER BY created DESC`.
+
+	$db->orderBy('created DESC');
+	
+	$db->orderBy(['firstName', 'created DESC'])
+
+### groupBy( *string* | *array* ) ###
+
+Group rows by columns. `SELECT category, count(id) count FROM users GROUP BY category`
+
+	$users = $db->table('users')->columns(['category', 'count(id) count'])->groupBy('category')->list();
+
+```json
+[
+  {
+    "category": "client",
+    "count": "2"
+  },
+  {
+    "category": "partner",
+    "count": "1"
+  }
+]
+```
+
 ## Dba Request Methods ##
 
 You can request rows from the database by building queries programatically and format the output using these methods.
