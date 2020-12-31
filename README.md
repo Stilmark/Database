@@ -21,6 +21,7 @@ Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to
 - [Dba Class](https://github.com/Stilmark/Database/wiki/Dba-Class)
 - [Dba Class Set Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Set-Methods)
 - [Dba Class Request Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Request-Methods)
+- [Dba Class Put Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Put-Methods)
 
 - [Sqli Class](https://github.com/Stilmark/Database/wiki/Sqli-Class)
 - [Sqli Class Request Methods](https://github.com/Stilmark/Database/wiki/Sqli-Class-Request-Methods)
