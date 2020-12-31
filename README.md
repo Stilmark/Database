@@ -6,8 +6,10 @@ This package contains the class **Sqli()** for querying databases and returning 
 
 Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to build a query programatically using chained methods. The following queries would return the same results.
 
+	$sqli = new Sqli();
 	$sqli->list( 'SELECT * FROM users' );
 
+	$db = new Dba();
 	$db->table('users')->list();
 
 ## Install using composer ##
