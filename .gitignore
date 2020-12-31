@@ -6,6 +6,7 @@
 vendor/
 composer.lock
 .env
+test.php
 
 # Node artifact files
 node_modules/
