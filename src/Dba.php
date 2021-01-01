@@ -174,11 +174,17 @@ class Dba
 	        		$operator = '=';
 	        	}
 
-    			if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE'])) {
-		            if (!preg_match('/^[a-z_]+\(.*\)$/i', $value)) {
+    			if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
+		            if (!preg_match('/^[a-z_]+\(.*\)$/i', $value) && !is_null($value)) {
 		                $value = $this->sqli->val($value);
 		            }
+    			} else {
+    				$operator = '=';
     			}
+
+	            if (is_null($value)) {
+	            	$value = 'null';
+	            }
 
             	$where[] = (!strpos($value, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
             } else {
@@ -313,17 +319,21 @@ class Dba
      * Fetch lists
      */
 
-    function list()
+    function list( $id = null )
     {
-        return $this->sqli->list( $this->makeSelectQuery() );
+    	if ($id != null) {
+    		return $this->sqli->listId( $this->makeSelectQuery(), $id);
+    	} else {
+    		return $this->sqli->list( $this->makeSelectQuery() );
+    	}
     }
 
     function listId( $id = 'id' )
     {
-        return $this->sqli->listId( $this->makeSelectQuery(), $id);
+        return $this->list( $id );
     }
 
-    function listGroup( $id = 'id' )
+    function groupId( $id = 'id' )
     {
         return $this->sqli->groupId( $this->makeSelectQuery(), $id);
     }
