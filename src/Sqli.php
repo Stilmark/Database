@@ -90,6 +90,19 @@ class Sqli
         }
     }
 
+    function listFlat($sql)
+    {
+        if ($query = $this->query($sql)) {
+            while ($row = $query->fetch_assoc()) {
+                $this->result[current($row)] = next($row);
+            }
+            $query->free();
+            return $this->result;
+        } else {
+            return $this->invalidQuery('listFlat', $sql);
+        }
+    }
+
     function verbose($sql)
     {
         return $sql;
@@ -138,6 +151,22 @@ class Sqli
     function close()
     {
         $this->mysqli->close();
+    }
+
+    // Aliases
+    function idList($sql)
+    {
+        return $this->listId($sql);
+    }
+
+    function flatList($sql)
+    {
+        return $this->listFlat($sql);
+    }
+
+    function groupedList($sql)
+    {
+        return $this->groupId($sql);
     }
 
 }

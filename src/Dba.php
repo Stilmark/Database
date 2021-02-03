@@ -10,7 +10,6 @@ class Dba
 
     function __construct()
     {
-
     	$this->sqli = (isset($GLOBALS['Sqli'])) ? $GLOBALS['Sqli']:new Sqli();
 
         $this->table = '';
@@ -22,7 +21,10 @@ class Dba
         $this->groupBy = [];
         $this->having = [];
         $this->limit = [];
+    }
 
+    public static function instance() {
+        return new Dba();
     }
 
     /*
@@ -117,7 +119,11 @@ class Dba
         $values = $this->values;
         foreach($values AS $column => $value) {
             if (!in_array($value, ['NOW()','CURDATE()'])) {
-                $value = $this->sqli->val($value);
+               if (!is_null($value)) {
+                    $value = $this->db->val($value);
+                } else {
+                    $value = 'null';
+                }
             }
             $values[$column] = $column.'='.$value;
         }
@@ -328,14 +334,36 @@ class Dba
     	}
     }
 
+    function groupId( $id = 'id' )
+    {
+        return $this->sqli->groupId( $this->makeSelectQuery(), $id);
+    }
+
     function listId( $id = 'id' )
     {
         return $this->list( $id );
     }
 
-    function groupId( $id = 'id' )
+    function listFlat()
     {
-        return $this->sqli->groupId( $this->makeSelectQuery(), $id);
+        return $this->sqli->listFlat( $this->makeSelectQuery() );
+    }
+
+    // Aliases
+
+    function idList( $id = 'id' )
+    {
+        return $this->listId( $id );
+    }
+
+    function groupedList( $id = 'id' )
+    {
+        return $this->groupId( $id );
+    }
+
+    function flatList()
+    {
+        return $this->listFlat();
     }
 
 }
