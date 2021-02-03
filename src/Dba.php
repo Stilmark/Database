@@ -24,7 +24,11 @@ class Dba
     }
 
     public static function instance() {
-        return new Dba();
+        $dba = new Dba();
+        if (isset(static::$table)) {
+            $dba->table = static::$table;
+        }
+        return $dba;
     }
 
     /*
