@@ -11,7 +11,10 @@ class Dba
     function __construct()
     {
     	$this->sqli = (isset($GLOBALS['Sqli'])) ? $GLOBALS['Sqli']:new Sqli();
+        $this->init();
+    }
 
+    function init() {
         $this->table = '';
         $this->values = [];
         $this->columns = [];
@@ -368,6 +371,11 @@ class Dba
     function flatList()
     {
         return $this->listFlat();
+    }
+
+    function set($values = [])
+    {
+        return $this->values($values);
     }
 
 }
