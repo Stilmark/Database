@@ -4,7 +4,8 @@
     "type": "package",
     "require": {
         "php": "^7",
-        "symfony/dotenv": "*"
+        "symfony/dotenv": "*",
+        "stilmark/parse": "*"
     },
     "license": "MIT",
     "authors": [
