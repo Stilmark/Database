@@ -318,6 +318,14 @@ class Dba
         return $this->row();
     }
 
+    function rowKeys() {
+        return $this->sqli->keys( $this->makeSelectQuery() );
+    }
+
+    function rowValues() {
+        return $this->sqli->values( $this->makeSelectQuery() );
+    }
+
     function first()
     {
     	return $this->row();
