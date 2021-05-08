@@ -310,9 +310,9 @@ class Dba
      * Fetch rows
      */
 
-    function row( Int $id = null )
+    function row( int $id = 0 )
     {
-        if (!is_null($id)) {
+        if ($id > 0) {
             $this->where = ['id' => $id];
         }
         return $this->sqli->row( $this->makeSelectQuery() );
