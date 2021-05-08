@@ -40,6 +40,9 @@ class Dba
 
     function table($table)
     {
+        if (is_array($table)) {
+            $table = current($table);
+        }
         $this->table = $table;
         return $this;
     }
@@ -307,8 +310,11 @@ class Dba
      * Fetch rows
      */
 
-    function row()
+    function row( Int $id = null )
     {
+        if (!is_null($id)) {
+            $this->where = ['id' => $id];
+        }
         return $this->sqli->row( $this->makeSelectQuery() );
     }
 
