@@ -34,12 +34,18 @@ Extend your object models on Dbi().
 
 - [Configure](https://github.com/Stilmark/Database/wiki/Configure)
 
+### DBI : DB Instance ###
+
 - [Dbi Class](https://github.com/Stilmark/Database/wiki/Dbi-Class)
+
+### DBA : DB Abstraction ###
 
 - [Dba Class](https://github.com/Stilmark/Database/wiki/Dba-Class)
 - [Dba Class Set Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Set-Methods)
 - [Dba Class Request Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Request-Methods)
 - [Dba Class Put Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Put-Methods)
+
+### SQLI : Query execution ###
 
 - [Sqli Class](https://github.com/Stilmark/Database/wiki/Sqli-Class)
 - [Sqli Class Request Methods](https://github.com/Stilmark/Database/wiki/Sqli-Class-Request-Methods)
