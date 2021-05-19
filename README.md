@@ -1,6 +1,6 @@
 # Database #
 
-This package contains the class **Sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **Dba()** makes it possible to generate queries with a cleaner code.
+This package contains the class **Sqli()** for querying databases and returning results. In addition a query builder or abstraction layer **Dba()** makes it possible to generate queries with a cleaner code. **Dbi()** provides a shorthand to Dba() as a static function.
 
 ## Quick reference ##
 
@@ -12,6 +12,20 @@ Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to
 	$db = new Dba();
 	$db->table('users')->list();
 
+The shorthand database instance **Dbi()** can be used as a static function like this:
+
+	Dbi::table('users')->list();
+
+Extend your object models on Dbi().
+
+	class User extends Dbi {
+
+	    public static $table = 'users';
+
+	}
+
+	$user = User::row(2);
+
 ## Install using composer ##
 
 	composer require stilmark/database
@@ -20,10 +34,18 @@ Where **Sqli()** accepts an SQL statement as a variable, **Dba()** allows you to
 
 - [Configure](https://github.com/Stilmark/Database/wiki/Configure)
 
+### DBI : DB Instance ###
+
+- [Dbi Class](https://github.com/Stilmark/Database/wiki/Dbi-Class)
+
+### DBA : DB Abstraction ###
+
 - [Dba Class](https://github.com/Stilmark/Database/wiki/Dba-Class)
 - [Dba Class Set Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Set-Methods)
 - [Dba Class Request Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Request-Methods)
 - [Dba Class Put Methods](https://github.com/Stilmark/Database/wiki/Dba-Class-Put-Methods)
+
+### SQLI : Query execution ###
 
 - [Sqli Class](https://github.com/Stilmark/Database/wiki/Sqli-Class)
 - [Sqli Class Request Methods](https://github.com/Stilmark/Database/wiki/Sqli-Class-Request-Methods)
