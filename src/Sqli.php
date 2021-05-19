@@ -10,8 +10,6 @@ class Sqli
         $this->result = [];
         $this->mysqli = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
 
-        // $this->db_connection = mysqli_connect();
-
         if ($this->mysqli->connect_error) {
             die('Database error: ' . $this->mysqli->connect_error);
         }
