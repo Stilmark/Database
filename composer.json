@@ -20,5 +20,8 @@
         "psr-4": {
             "Stilmark\\Database\\": "src/"
         }
+    },
+    "require-dev": {
+        "atoum/atoum": "4.x-dev"
     }
 }

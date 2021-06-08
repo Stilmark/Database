@@ -297,13 +297,20 @@ class Dba
      * Delete
      */
 
-    function delete() {
+    function delete()
+    {
         if (empty($this->getWhere())) {
             dd('No WHERE for delete');
         }
         $sql = sprintf('DELETE FROM %s WHERE %s', $this->table, $this->getWhere());
         $this->sqli->query($sql);
         return $this->sqli->affected_rows();
+    }
+
+    function truncate()
+    {
+        $sql = sprintf('TRUNCATE %s', $this->table);
+        $this->sqli->query($sql);
     }
 
     /*
