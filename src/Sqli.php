@@ -8,7 +8,7 @@ class Sqli
     function __construct()
 	{
         $this->result = [];
-        $this->mysqli = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
+        $this->mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
 
         if ($this->mysqli->connect_error) {
             die('Database error: ' . $this->mysqli->connect_error);
