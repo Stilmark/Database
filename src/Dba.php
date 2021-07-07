@@ -301,7 +301,8 @@ class Dba
      * Delete
      */
 
-    function delete() {
+    function delete()
+    {
         if (empty($this->getWhere())) {
             return ['error' => 'Delete requires WHERE scope'];
         }
@@ -309,6 +310,12 @@ class Dba
         $this->sqli->query($sql);
 
         return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
+    }
+
+    function truncate()
+    {
+        $sql = sprintf('TRUNCATE %s', $this->table);
+        $this->sqli->query($sql);
     }
 
     /*
