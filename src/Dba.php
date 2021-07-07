@@ -259,7 +259,8 @@ class Dba
         }
         $sql = sprintf('INSERT INTO %s SET %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
-        return $this->sqli->insert_id();
+
+        return ['id' => $this->sqli->insert_id(), 'statement' => $sql];
     }
 
     function replace()
@@ -269,7 +270,8 @@ class Dba
         }
         $sql = sprintf('REPLACE INTO %s SET %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
-        return $this->sqli->insert_id();
+
+        return ['id' => $this->sqli->insert_id(), 'statement' => $sql];
     }
 
     /*
@@ -283,14 +285,16 @@ class Dba
         }
         $sql = sprintf('UPDATE %s SET %s WHERE id=%d', $this->table, $this->getValues(), $id);
         $this->sqli->query($sql);
-        return $this->sqli->affected_rows();
+
+        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
     }
 
     function update()
     {
         $sql = sprintf('UPDATE %s SET %s WHERE %s', $this->table, $this->getValues(), $this->getWhere());
         $this->sqli->query($sql);
-        return $this->sqli->affected_rows();
+
+        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
     }
 
     /*
@@ -299,11 +303,12 @@ class Dba
 
     function delete() {
         if (empty($this->getWhere())) {
-            dd('No WHERE for delete');
+            return ['error' => 'Delete requires WHERE scope'];
         }
         $sql = sprintf('DELETE FROM %s WHERE %s', $this->table, $this->getWhere());
         $this->sqli->query($sql);
-        return $this->sqli->affected_rows();
+
+        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
     }
 
     /*
