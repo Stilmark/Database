@@ -176,7 +176,10 @@ class Dba
     {
         $where = [];
         foreach($this->where AS $key => $value) {
+		
         	if (!is_array($value)) {
+			
+			unset($operator);
 
 	        	if (strpos($key, ':')) {
 	        		$arg = explode(':',$key);
