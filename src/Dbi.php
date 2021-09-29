@@ -10,7 +10,7 @@ class Dbi {
     {
         $dba = Dba::instance();
 
-        if (static::$table) {
+        if (isset(static::$table)) {
             $dba->table(static::$table);
         }
 
@@ -23,9 +23,6 @@ class Dbi {
         } else {
             return $dba->$name();
         }
-
-
     }
-
 }
 
