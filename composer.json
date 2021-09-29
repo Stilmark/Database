@@ -3,9 +3,9 @@
     "description": "PHP/Mysqli database connection and query builder.",
     "type": "package",
     "require": {
-        "php": "^7",
+        "php": ">=7",
         "symfony/dotenv": "*",
-        "stilmark/parse": "*"
+        "stilmark/parse": ">=v0.60"
     },
     "license": "MIT",
     "authors": [
