@@ -319,6 +319,8 @@ class Dba
     {
         $sql = sprintf('TRUNCATE %s', $this->table);
         $this->sqli->query($sql);
+
+        return ['affected_rows' => $this->db->affected_rows(), 'statement' => $sql];
     }
 
     /*
