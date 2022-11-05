@@ -5,7 +5,7 @@
     "require": {
         "php": ">=7",
         "symfony/dotenv": "*",
-        "stilmark/parse": ">=v0.60"
+        "stilmark/parse": ">=v0.70"
     },
     "license": "MIT",
     "authors": [
@@ -20,8 +20,5 @@
         "psr-4": {
             "Stilmark\\Database\\": "src/"
         }
-    },
-    "require-dev": {
-        "atoum/atoum": "4.x-dev"
     }
 }
