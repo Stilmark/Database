@@ -92,9 +92,16 @@ class Dba
         return $this;
     }
 
-    function limit($limit = '')
+    function limit(int $limit = 0, int $offset = 0): Dba
     {
         $this->limit = $limit;
+        $this->offset = $offset;
+        return $this;
+    }
+
+    function offset(int $offset = 0): Dba
+    {
+        $this->offset = $offset;
         return $this;
     }
 
@@ -248,7 +255,7 @@ class Dba
         if (empty($this->limit)) {
             return false;
         }
-        return 'LIMIT '.$this->limit;
+        return 'LIMIT '.(isset($this->offset) ? $this->offset.',':'').$this->limit;
     }
 
     /*
@@ -354,9 +361,14 @@ class Dba
     	return $this->row();
     }
 
-    function last()
+    function last( $key = 'id')
     {
-    	return ['todo'];
+        // todo: whereSubquery
+        /*
+        $this->where([$key => '(SELECT MAX('.$key.') FROM '.$this->table.')']);
+        die($this->makeSelectQuery());
+    	return $this->sqli->row( $this->makeSelectQuery() );
+        */
     }
 
     /*
