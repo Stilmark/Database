@@ -111,6 +111,12 @@ class Dba
         return $this;
     }
 
+    function subQuery($key = 'id', $query = '')
+    {
+        $this->subQuery = ['key' => $key, 'query' => $query];
+        return $this;
+    }
+
     /*
      * Assemble query
      */
@@ -216,6 +222,10 @@ class Dba
             } else {
             	$where[] = $this->table.'.'.$key.' IN ('.implode(',', $value).')';
             }
+        }
+
+        if (isset($this->subQuery)) {
+            $where[] = $this->table.'.'.$this->subQuery['key'].' IN ('.$this->subQuery['query'].')';
         }
 
         /*
@@ -419,6 +429,11 @@ class Dba
     function set($values = [])
     {
         return $this->values($values);
+    }
+
+    function sql()
+    {
+        return $this->makeSelectQuery();
     }
 
 }
