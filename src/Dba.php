@@ -113,7 +113,7 @@ class Dba
 
     function subQuery($key = 'id', $query = '')
     {
-        $this->subQuery = ['key' => $key, 'query' => $query];
+        $this->subQueries[$key] = $query;
         return $this;
     }
 
@@ -224,8 +224,8 @@ class Dba
             }
         }
 
-        if (isset($this->subQuery)) {
-            $where[] = $this->table.'.'.$this->subQuery['key'].' IN ('.$this->subQuery['query'].')';
+        if (isset($this->subQueries)) {
+            $where[] = $this->table.'.'.key($this->subQueries).' IN ('.current($this->subQueries).')';
         }
 
         /*
