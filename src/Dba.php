@@ -24,6 +24,7 @@ class Dba
         $this->groupBy = [];
         $this->having = [];
         $this->limit = [];
+        $this->subQuery = [];
     }
 
     public static function instance() {
@@ -113,7 +114,7 @@ class Dba
 
     function subQuery($key = 'id', $query = '')
     {
-        $this->subQueries[$key] = $query;
+        $this->subQuery[$key] = $query;
         return $this;
     }
 
@@ -191,28 +192,28 @@ class Dba
         foreach($this->where AS $key => $value) {
 		
         	if (!is_array($value)) {
+
+                unset($operator);
 			
-			unset($operator);
+                if (strpos($key, ':')) {
+                    $arg = explode(':',$key);
+                    if (count($arg) == 2) {
+                        $key = trim($arg[0]);
+                        $operator = strtoupper(trim($arg[1]));
+                    }
+                }
 
-	        	if (strpos($key, ':')) {
-	        		$arg = explode(':',$key);
-	        		if (count($arg) == 2) {
-	        			$key = trim($arg[0]);
-	        			$operator = strtoupper(trim($arg[1]));
-	        		}
-	        	}
+                if (!isset($operator)) {
+                    $operator = '=';
+                }
 
-	        	if (!isset($operator)) {
-	        		$operator = '=';
-	        	}
-
-    			if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
-		            if (!preg_match('/^[a-z_]+\(.*\)$/i', $value) && !is_null($value)) {
-		                $value = $this->sqli->val($value);
-		            }
-    			} else {
-    				$operator = '=';
-    			}
+                if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
+                    if (!preg_match('/^[a-z_]+\(.*\)$/i', $value) && !is_null($value)) {
+                        $value = $this->sqli->val($value);
+                    }
+                } else {
+                    $operator = '=';
+                }
 
 	            if (is_null($value)) {
 	            	$value = 'null';
@@ -224,15 +225,11 @@ class Dba
             }
         }
 
-        if (isset($this->subQueries)) {
-            $where[] = $this->table.'.'.key($this->subQueries).' IN ('.current($this->subQueries).')';
+        if (!empty($this->subQuery)) {
+            foreach($this->subQuery AS $key => $query) {
+                $where[] = $this->table.'.'.$key.' IN ('.$query.')';
+            }
         }
-
-        /*
-        if (isset($this->match)) {
-            $scope[] = 'MATCH('.implode(',',$this->match['columns']).') AGAINST("'.$this->match['query'].'" IN BOOLEAN MODE)';
-        }
-        */
 
         if (count($where) > 0) {
         	return 'WHERE '.implode(' AND ', $where);
