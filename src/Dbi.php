@@ -16,6 +16,9 @@ class Dbi {
         if (isset(static::$join)) {
             $dba->join(static::$join);
         }
+        if (isset(static::$visible)) {
+            $dba->visble(static::$visible);
+        }
 
         if (count($arguments) == 1 && isset($arguments[0])) {
             $arguments = $arguments[0];

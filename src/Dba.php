@@ -18,6 +18,7 @@ class Dba
         $this->table = '';
         $this->values = [];
         $this->columns = [];
+        $this->visible = [];
         $this->join = [];
         $this->where = [];
         $this->orderBy = [];
@@ -34,6 +35,9 @@ class Dba
         }
         if (isset(static::$join)) {
             $dba->join = static::$join;
+        }
+        if (isset(static::$visible)) {
+            $dba->visible = static::$visible;
         }
         return $dba;
     }
@@ -160,7 +164,7 @@ class Dba
     function getColumns()
     {
         $columns = $this->columns;
-        if (count($columns) == 0) {
+        if (count($columns) == 0 && !isset($this->visisble)) {
             $columns = ['*'];
             if (count($this->join) > 0) {
                 foreach($this->join AS $table => $join) {
@@ -169,6 +173,9 @@ class Dba
             }
         }
         foreach($columns AS $key => $value) {
+            if (isset($this->visisble) && !in_array($key, $this->visible)) {
+                continue;
+            }
             if (!strpos($value, '.') && !strpos($value, '(')) {
                 $columns[$key] = $this->table.'.'.$value;
             }
