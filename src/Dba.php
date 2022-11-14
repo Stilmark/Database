@@ -160,7 +160,7 @@ class Dba
         foreach($values AS $column => $value) {
             if (!in_array($value, ['NOW()','CURDATE()'])) {
                if (!is_null($value)) {
-                    $value = $this->db->val($value);
+                    $value = $this->sqli->val($value);
                 } else {
                     $value = 'null';
                 }
@@ -360,7 +360,7 @@ class Dba
         $sql = sprintf('TRUNCATE %s', $this->table);
         $this->sqli->query($sql);
 
-        return ['affected_rows' => $this->db->affected_rows(), 'statement' => $sql];
+        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
     }
 
     /*
