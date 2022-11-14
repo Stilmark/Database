@@ -173,7 +173,12 @@ class Dba
     function getColumns()
     {
         $columns = $this->columns;
-        if (count($columns) == 0 && !isset($this->visible)) {
+
+        if (!count($columns)) {
+            $columns = $this->visible;
+        }
+
+        if (!count($columns) && !count($this->visible)) {
             $columns = ['*'];
             if (count($this->join) > 0) {
                 foreach($this->join AS $table => $join) {
@@ -181,15 +186,17 @@ class Dba
                 }
             }
         }
+
         foreach($columns AS $key => $value) {
-            if (isset($this->visible) && !in_array($key, $this->visible)) {
+            if (count($this->visible) && !in_array($value, $this->visible)) {
+                unset($columns[$key]);
                 continue;
             }
             if (!strpos($value, '.') && !strpos($value, '(')) {
                 $columns[$key] = $this->table.'.'.$value;
             }
-
         }
+
         return implode(', ', array_unique($columns));
     }
 
