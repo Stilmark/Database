@@ -17,7 +17,7 @@ class Dbi {
             $dba->join(static::$join);
         }
         if (isset(static::$visible)) {
-            $dba->visble(static::$visible);
+            $dba->visible(static::$visible);
         }
 
         if (count($arguments) == 1 && isset($arguments[0])) {
