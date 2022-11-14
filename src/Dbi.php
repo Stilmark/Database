@@ -19,6 +19,13 @@ class Dbi {
         if (isset(static::$visible)) {
             $dba->visible(static::$visible);
         }
+        if (isset(static::$fillable)) {
+            $dba->fillable(static::$fillable);
+        }
+        if (isset(static::$dates)) {
+            $dba->dates(static::$dates);
+            $dba->fillable(static::$dates);
+        }
 
         if (count($arguments) == 1 && isset($arguments[0])) {
             $arguments = $arguments[0];

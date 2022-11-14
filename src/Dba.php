@@ -3,6 +3,7 @@
 namespace Stilmark\Database;
 
 use Stilmark\Database\Sqli;
+use Stilmark\Parse\Dump;
 
 class Dba
 {
@@ -19,6 +20,8 @@ class Dba
         $this->values = [];
         $this->columns = [];
         $this->visible = [];
+        $this->fillable = [];
+        $this->dates = [];
         $this->join = [];
         $this->where = [];
         $this->orderBy = [];
@@ -29,17 +32,7 @@ class Dba
     }
 
     public static function instance() {
-        $dba = new Dba();
-        if (isset(static::$table)) {
-            $dba->table = static::$table;
-        }
-        if (isset(static::$join)) {
-            $dba->join = static::$join;
-        }
-        if (isset(static::$visible)) {
-            $dba->visible = static::$visible;
-        }
-        return $dba;
+        return new Dba();
     }
 
     /*
@@ -55,12 +48,30 @@ class Dba
         return $this;
     }
 
+    function dates($dates = [])
+    {
+        if (!is_array($dates)) {
+            $dates = [$dates];
+        }
+        $this->dates = $dates;
+        return $this;
+    }
+
     function columns($columns = [])
     {
         if (!is_array($columns)) {
             $columns = [$columns];
         }
-        $this->columns = $columns;
+        $this->columns = array_merge($this->columns, $columns);
+        return $this;
+    }
+
+    function fillable($columns = [])
+    {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+        $this->fillable = array_merge($this->fillable, $columns);
         return $this;
     }
 
@@ -69,19 +80,19 @@ class Dba
         if (!is_array($columns)) {
             $columns = [$columns];
         }
-        $this->visible = $columns;
+        $this->visible = array_merge($this->visible, $columns);
         return $this;
     }
 
     function values($values = [])
     {
-        $this->values = $values;
+        $this->values = array_merge($this->values, $values);
         return $this;
     }
 
     function where($where = [])
     {
-        $this->where = $where;
+        $this->where = array_merge($this->where, $where);
         return $this;
     }
 
@@ -90,7 +101,7 @@ class Dba
         if (!is_array($orderBy)) {
             $orderBy = [$orderBy];
         }
-        $this->orderBy = $orderBy;
+        $this->orderBy = array_merge($this->orderBy, $orderBy);
         return $this;
     }
 
@@ -99,7 +110,7 @@ class Dba
         if (!is_array($groupBy)) {
             $groupBy = [$groupBy];
         }
-        $this->groupBy = $groupBy;
+        $this->groupBy = array_merge($this->groupBy, $groupBy);;
         return $this;
     }
 
@@ -158,6 +169,10 @@ class Dba
     {
         $values = $this->values;
         foreach($values AS $column => $value) {
+            if (!in_array($column, $this->fillable)) {
+                echo Dump::json(['error' => 'Column not fillable', 'message' => 'The column "'.$column.'" is not fillable.']);
+                exit;
+            }
             if (!in_array($value, ['NOW()','CURDATE()'])) {
                if (!is_null($value)) {
                     $value = $this->sqli->val($value);
@@ -167,7 +182,10 @@ class Dba
             }
             $values[$column] = $column.'='.$value;
         }
-        return implode(', ', array_unique($values));
+
+        if (count($values)) {
+            return 'SET '. implode(', ', array_unique($values));
+        }
     }
 
     function getColumns()
@@ -297,10 +315,16 @@ class Dba
 
     function create()
     {
-        if (count($this->values) == 0) {
+        if (!count($this->values)) {
             return false;
         }
-        $sql = sprintf('INSERT INTO %s SET %s', $this->table, $this->getValues());
+        if (count($this->dates) && in_array('created_at', $this->dates)) {
+            $this->values(['created_at' => 'NOW()']);
+        }
+        if (count($this->dates) && in_array('updated_at', $this->dates)) {
+            $this->values(['updated_at' => 'NOW()']);
+        }
+        $sql = sprintf('INSERT INTO %s %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
 
         return ['id' => $this->sqli->insert_id(), 'statement' => $sql];
@@ -308,10 +332,13 @@ class Dba
 
     function replace()
     {
-        if (count($this->values) == 0) {
+        if (!count($this->values)) {
             return false;
         }
-        $sql = sprintf('REPLACE INTO %s SET %s', $this->table, $this->getValues());
+        if (count($this->dates) && in_array('updated_at', $this->dates)) {
+            $this->values(['updated_at' => 'NOW()']);
+        }
+        $sql = sprintf('REPLACE INTO %s %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
 
         return ['id' => $this->sqli->insert_id(), 'statement' => $sql];
@@ -323,10 +350,13 @@ class Dba
 
     function updateById(Int $id, Array $values = [])
     {
-        if (count($values) > 0) {
+        if (count($values)) {
             $this->values($values);
         }
-        $sql = sprintf('UPDATE %s SET %s WHERE id=%d', $this->table, $this->getValues(), $id);
+        if (count($this->dates) && in_array('updated_at', $this->dates)) {
+            $this->values(['updated_at' => 'NOW()']);
+        }
+        $sql = sprintf('UPDATE %s %s WHERE id=%d', $this->table, $this->getValues(), $id);
         $this->sqli->query($sql);
 
         return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
@@ -334,7 +364,11 @@ class Dba
 
     function update()
     {
-        $sql = sprintf('UPDATE %s SET %s WHERE %s', $this->table, $this->getValues(), $this->getWhere());
+        if (count($this->dates) && in_array('updated_at', $this->dates)) {
+            $this->values(['updated_at' => 'NOW()']);
+        }
+
+        $sql = sprintf('UPDATE %s %s %s', $this->table, $this->getValues(), $this->getWhere());
         $this->sqli->query($sql);
 
         return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
@@ -346,10 +380,11 @@ class Dba
 
     function delete()
     {
-        if (empty($this->getWhere())) {
-            return ['error' => 'Delete requires WHERE scope'];
+        if (!count($this->getWhere())) {
+            echo Dump::json(['error' => 'Missing scope', 'message' => 'Delete query requires WHERE scope']);
+            exit;
         }
-        $sql = sprintf('DELETE FROM %s WHERE %s', $this->table, $this->getWhere());
+        $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
         $this->sqli->query($sql);
 
         return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
