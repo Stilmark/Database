@@ -64,6 +64,15 @@ class Dba
         return $this;
     }
 
+    function visible($columns = [])
+    {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+        $this->visible = $columns;
+        return $this;
+    }
+
     function values($values = [])
     {
         $this->values = $values;
@@ -164,7 +173,7 @@ class Dba
     function getColumns()
     {
         $columns = $this->columns;
-        if (count($columns) == 0 && !isset($this->visisble)) {
+        if (count($columns) == 0 && !isset($this->visible)) {
             $columns = ['*'];
             if (count($this->join) > 0) {
                 foreach($this->join AS $table => $join) {
@@ -173,7 +182,7 @@ class Dba
             }
         }
         foreach($columns AS $key => $value) {
-            if (isset($this->visisble) && !in_array($key, $this->visible)) {
+            if (isset($this->visible) && !in_array($key, $this->visible)) {
                 continue;
             }
             if (!strpos($value, '.') && !strpos($value, '(')) {
