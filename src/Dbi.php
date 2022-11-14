@@ -13,6 +13,9 @@ class Dbi {
         if (isset(static::$table)) {
             $dba->table(static::$table);
         }
+        if (isset(static::$join)) {
+            $dba->join(static::$join);
+        }
 
         if (count($arguments) == 1 && isset($arguments[0])) {
             $arguments = $arguments[0];
