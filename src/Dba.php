@@ -32,6 +32,9 @@ class Dba
         if (isset(static::$table)) {
             $dba->table = static::$table;
         }
+        if (isset(static::$join)) {
+            $dba->join = static::$join;
+        }
         return $dba;
     }
 
