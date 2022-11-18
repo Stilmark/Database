@@ -29,6 +29,7 @@ class Dba
         $this->having = [];
         $this->limit = [];
         $this->subQuery = [];
+        $this->dryrun = false;
     }
 
     public static function instance() {
@@ -142,6 +143,12 @@ class Dba
     function subQuery($key = 'id', $query = '')
     {
         $this->subQuery[$key] = $query;
+        return $this;
+    }
+
+    function dryrun()
+    {
+        $this->sqli->dryrun = $this->dryrun = true;
         return $this;
     }
 
@@ -327,7 +334,7 @@ class Dba
         $sql = sprintf('INSERT INTO %s %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
 
-        return ['id' => $this->sqli->insert_id(), 'statement' => $sql];
+        return ['id' => $this->sqli->insert_id() ?? null, 'statement' => $sql];
     }
 
     function replace()
