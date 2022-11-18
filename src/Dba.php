@@ -176,10 +176,6 @@ class Dba
     {
         $values = $this->values;
         foreach($values AS $column => $value) {
-            if (!in_array($column, $this->fillable)) {
-                echo Dump::json(['error' => 'Column not fillable', 'message' => 'The column "'.$column.'" is not fillable.']);
-                exit;
-            }
             if (!in_array($value, ['NOW()','CURDATE()'])) {
                if (!is_null($value)) {
                     $value = $this->sqli->val($value);
