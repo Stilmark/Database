@@ -4,4 +4,4 @@
 
 # Documentation #
 
-https://stilmark-1.gitbook.io/database/
+https://stilmark-projects.gitbook.io/database
