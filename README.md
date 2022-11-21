@@ -1,4 +1,13 @@
-# Install using composer #
+<div align="center">
+
+# Database abstraction for PHP
+MySQLi functions, Query builder and Model instance.
+    
+[![CodeFactor](https://www.codefactor.io/repository/github/stilmark/database/badge)](https://www.codefactor.io/repository/github/stilmark/database)
+    
+</div>
+
+## Install using composer ##
 
     composer require stilmark/database
 
@@ -18,6 +27,10 @@
     # Extend your models on Dbi()
     $users = User::list();
 
-# Documentation #
+## Documentation ##
 
 https://stilmark-projects.gitbook.io/database
+
+## Support this project ##
+
+BTC: 1e1C89CNZAGX8eyoHeQuBb32HSLC7idMo
