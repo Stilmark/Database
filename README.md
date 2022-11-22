@@ -27,20 +27,15 @@ MySQLi functions, Query builder and Model instance.
     # Extend your models on Dbi()
     $users = User::list();
 
-## Documentation ##
+## :blue_book: Documentation ##
 
 https://stilmark-projects.gitbook.io/database
 
-## Support this project ##
+## Support this project with a :coffee: or a :croissant: ##
 
-**$BTC:** 1e1C89CNZAGX8eyoHeQuBb32HSLC7idMo
+**$BTC:** `1e1C89CNZAGX8eyoHeQuBb32HSLC7idMo`
 
-**$DOT:** 1kmH8qHKp8E4aDpoFqD9rn4NKadoGhVFiEvdp7najZZT165
+**$DOT:** `1kmH8qHKp8E4aDpoFqD9rn4NKadoGhVFiEvdp7najZZT165`
 
-**$BNB:** bnb15ga5xt2rjnz8ptv63j6nys674n56eknsxp2w7w
+**$USDT:** `0x8FB377c6770BBaa1303db85f5188375Bd633E149`
 
-**$LINK:** 0x8FB377c6770BBaa1303db85f5188375Bd633E149
-
-**$USDT:** 0x8FB377c6770BBaa1303db85f5188375Bd633E149
-
-**$USDC:** 0x8FB377c6770BBaa1303db85f5188375Bd633E149
