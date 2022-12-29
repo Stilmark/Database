@@ -81,7 +81,13 @@ class Dba
         if (!is_array($columns)) {
             $columns = [$columns];
         }
-        $this->visible = array_merge($this->visible, $columns);
+
+        foreach($columns AS $column) {
+            if (preg_match('/([a-z_]+)$/i', $column, $match)) {
+                $this->visible[$match[0]] = $column;
+            }
+        }
+
         return $this;
     }
 
@@ -196,7 +202,7 @@ class Dba
         $columns = $this->columns;
 
         if (!count($columns)) {
-            $columns = $this->visible;
+            $columns = array_keys($this->visible);
         }
 
         if (!count($columns) && !count($this->visible)) {
@@ -209,8 +215,12 @@ class Dba
         }
 
         foreach($columns AS $key => $value) {
-            if (count($this->visible) && !in_array($value, $this->visible)) {
-                unset($columns[$key]);
+            if (count($this->visible)) {
+                if (isset($this->visible[$value])) {
+                    $columns[$key] = $this->visible[$value];
+                } else {
+                    unset($columns[$key]);    
+                }
                 continue;
             }
             if (!strpos($value, '.') && !strpos($value, '(')) {
