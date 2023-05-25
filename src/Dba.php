@@ -3,7 +3,6 @@
 namespace Stilmark\Database;
 
 use Stilmark\Database\Sqli;
-use Stilmark\Parse\Dump;
 
 class Dba
 {
@@ -396,9 +395,8 @@ class Dba
 
     function delete()
     {
-        if (!count($this->getWhere())) {
-            echo Dump::json(['error' => 'Missing scope', 'message' => 'Delete query requires WHERE scope']);
-            exit;
+        if (!count($this->where())) {
+            die('Delete query requires WHERE scope');
         }
         $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
         $this->sqli->query($sql);
