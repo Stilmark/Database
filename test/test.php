@@ -13,12 +13,11 @@ $dotenv = new Dotenv();
 $dotenv->load(ROOT.'/.env');
 
 // $users = User::dryrun();
-$users = User::columns(['id', 'firstName', 'lastName'])->where(['firstName' => ['Hans']])->list('id');
-// die();
-// $users = User::listId('id');
-// $users = User::values(['category' => 'client'])->where(['id' => 4])->list();
+// $users = User::columns(['id', 'firstName', 'lastName'])->where(['firstName' => ['Hans']])->list('id');
+
+$status = User::where(['id' => 4])->delete();
 
 echo Vardump::json(
-	$users
+	$status
 	, JSON_PRETTY_PRINT
 );

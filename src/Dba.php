@@ -395,7 +395,7 @@ class Dba
 
     function delete()
     {
-        if (!count($this->where())) {
+        if (!count($this->where)) {
             die('Delete query requires WHERE scope');
         }
         $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
