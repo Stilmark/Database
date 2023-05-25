@@ -103,6 +103,11 @@ class Sqli
             return true;
         }
 
+        if (strpos($key, ' ')) {
+            $keys = explode(' ', $key);
+
+        }
+
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[$row[$key]] = $row;
@@ -163,6 +168,14 @@ class Sqli
     function invalidQuery($type, $sql)
     {
         die('Invalid query ('.$type.'): ' . $sql);
+    }
+
+    function implodeVal($array, $isString = false)
+    {
+        foreach($array AS $n => $value) {
+            $array[$n] = $this->val($value, $isString);
+        }
+        return implode(', ', $array);
     }
 
     function val($value, $isString = false)

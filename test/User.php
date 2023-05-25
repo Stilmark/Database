@@ -11,14 +11,17 @@ class User extends Dbi {
     	'email',
         'category'
     ];
+    /*
     protected static $visible = [
     	'id',
-    	'firstName',
+    	'firstName first_name',
+        'lastName',
     	'email'
     ];
-    protected static $dates = [
-    	'created_at',
-    	'updated_at'
-    ];
+    */
+    // protected static $dates = [
+    // 	'created_at',
+    // 	'updated_at'
+    // ];
 
 }
