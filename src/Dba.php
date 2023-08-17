@@ -275,11 +275,11 @@ class Dba
 	            	$value = 'null';
 	            }
 
-            	$where[] = (!strpos($value, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
+            	$where[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
 
             } else {
 
-            	$where[] = $this->table.'.'.$key.' IN ('.$this->sqli->implodeVal($value).')';
+            	$where[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' IN ('.$this->sqli->implodeVal($value).')';
 
             }
         }
