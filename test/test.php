@@ -15,9 +15,9 @@ $dotenv->load(ROOT.'/.env');
 // $users = User::dryrun();
 // $users = User::columns(['id', 'firstName', 'lastName'])->where(['firstName' => ['Hans']])->list('id');
 
-$status = User::where(['id' => 4])->delete();
+$result = User::where(['id' => 1])->orWhere(['id' => 2, 'firstName' => 'Lars'])->debug()->list();
 
-echo Vardump::json(
-	$status
+Vardump::json(
+	$result
 	, JSON_PRETTY_PRINT
 );

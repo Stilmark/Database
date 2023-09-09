@@ -28,7 +28,7 @@ class Dba
         $this->having = [];
         $this->limit = [];
         $this->subQuery = [];
-        $this->dryrun = false;
+        $this->debug = false;
     }
 
     public static function instance() {
@@ -96,9 +96,15 @@ class Dba
         return $this;
     }
 
-    function where($where = [])
+    function where($conditions = [])
     {
-        $this->where = array_merge($this->where, $where);
+        $this->where[] = ['operator' => 'AND', 'conditions' => $conditions];
+        return $this;
+    }
+
+    function orWhere($conditions = [])
+    {
+        $this->where[] = ['operator' => 'OR', 'conditions' => $conditions];
         return $this;
     }
 
@@ -151,9 +157,9 @@ class Dba
         return $this;
     }
 
-    function dryrun()
+    function debug()
     {
-        $this->sqli->dryrun = $this->dryrun = true;
+        $this->sqli->debug = $this->debug = true;
         return $this;
     }
 
@@ -244,54 +250,62 @@ class Dba
 
     function getWhere()
     {
-        $where = [];
-        foreach($this->where AS $key => $value) {
-		
-        	if (!is_array($value)) {
+        foreach($this->where AS $n => $where) {
 
-                unset($operator);
-			
-                if (strpos($key, ':')) {
-                    $arg = explode(':',$key);
-                    if (count($arg) == 2) {
-                        $key = trim($arg[0]);
-                        $operator = strtoupper(trim($arg[1]));
+            $filter = [];
+
+            foreach($where['conditions'] AS $key => $value) {
+
+                if (!is_array($value)) {
+
+                    unset($operator);
+
+                    if (strpos($key, ':')) {
+                        $arg = explode(':',$key);
+                        if (count($arg) == 2) {
+                            $key = trim($arg[0]);
+                            $operator = strtoupper(trim($arg[1]));
+                        }
                     }
-                }
 
-                if (!isset($operator)) {
-                    $operator = '=';
-                }
-
-                if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
-                    if (!preg_match('/^[a-z_]+\(.*\)$/i', $value) && !is_null($value)) {
-                        $value = $this->sqli->val($value);
+                    if (!isset($operator)) {
+                        $operator = '=';
                     }
+
+                    if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
+                        if (!preg_match('/^[a-z_]+\(.*\)$/i', $value) && !is_null($value)) {
+                            $value = $this->sqli->val($value);
+                        }
+                    } else {
+                        $operator = '=';
+                    }
+
+                    if (is_null($value)) {
+                        $value = 'null';
+                    }
+
+                    $filter[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
+
                 } else {
-                    $operator = '=';
+
+                    $filter[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' IN ('.$this->sqli->implodeVal($value).')';
+
                 }
+            }
 
-	            if (is_null($value)) {
-	            	$value = 'null';
-	            }
+            if (!empty($this->subQuery)) {
+                foreach($this->subQuery AS $key => $query) {
+                    $filter[] = $this->table.'.'.$key.' IN ('.$query.')';
+                }
+            }
 
-            	$where[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
-
-            } else {
-
-            	$where[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' IN ('.$this->sqli->implodeVal($value).')';
-
+            if (count($filter) > 0) {
+                $filterSet[] = ($n > 0 ? $where['operator']:'').' ('.implode(' AND ', $filter).')';
             }
         }
 
-        if (!empty($this->subQuery)) {
-            foreach($this->subQuery AS $key => $query) {
-                $where[] = $this->table.'.'.$key.' IN ('.$query.')';
-            }
-        }
-
-        if (count($where) > 0) {
-        	return 'WHERE '.implode(' AND ', $where);
+        if (count($filterSet)) {
+            return 'WHERE '.implode(' ',$filterSet);
         }
     }
 

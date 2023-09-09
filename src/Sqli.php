@@ -7,6 +7,7 @@ class Sqli
 
     function __construct()
 	{
+        $this->debug = false;
         $this->result = [];
         $this->mysqli = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
 
@@ -15,24 +16,21 @@ class Sqli
         }
 
         $this->mysqli->set_charset('utf8');
-        $this->dryrun = false;
 	}
 
     function query($sql)
     {
-        if ($this->dryrun) {
-            return true;
+        if ($this->debug) {
+            die($sql);
         }
-
         return $this->mysqli->query($sql);        
     }
 
     function row($sql)
     {
-        if ($this->dryrun) {
-            return true;
+        if ($this->debug) {
+            die($sql);
         }
-
         if ($query = $this->query($sql)) {
             $this->result = $query->fetch_assoc();
             $query->free();
@@ -42,49 +40,31 @@ class Sqli
         }
     }
 
-    function key($sql) {
-
-        if ($this->dryrun) {
-            return true;
-        }
-
+    function key($sql)
+    {
         return array_keys($this->row($sql))[0];
     }
 
-    function keys($sql) {
-
-        if ($this->dryrun) {
-            return true;
-        }
-
+    function keys($sql)
+    {
         return array_keys($this->row($sql));
     }
 
-    function value($sql) {
-
-        if ($this->dryrun) {
-            return true;
-        }
-
+    function value($sql)
+    {
         return array_values($this->row($sql))[0];
     }
 
-    function values($sql) {
-
-        if ($this->dryrun) {
-            return true;
-        }
-
+    function values($sql)
+    {
         return array_values($this->row($sql));
     }
 
     function list($sql)
     {
-
-        if ($this->dryrun) {
-            return true;
+        if ($this->debug) {
+            die($sql);
         }
-
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[] = $row;
@@ -98,11 +78,9 @@ class Sqli
 
     function listId($sql, $key = 'id')
     {
-
-        if ($this->dryrun) {
-            return true;
+        if ($this->debug) {
+            die($sql);
         }
-
         if (strpos($key, ' ')) {
             $keys = explode(' ', $key);
 
@@ -121,11 +99,9 @@ class Sqli
 
     function groupId($sql, $key = 'id')
     {
-
-        if ($this->dryrun) {
-            return true;
+        if ($this->debug) {
+            die($sql);
         }
-
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[$row[$key]][] = $row;
@@ -139,11 +115,9 @@ class Sqli
 
     function listFlat($sql)
     {
-
-        if ($this->dryrun) {
-            return true;
+        if ($this->debug) {
+            die($sql);
         }
-
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[current($row)] = next($row);
