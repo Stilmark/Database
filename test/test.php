@@ -15,7 +15,8 @@ $dotenv->load(ROOT.'/.env');
 // $users = User::dryrun();
 // $users = User::columns(['id', 'firstName', 'lastName'])->where(['firstName' => ['Hans']])->list('id');
 
-$result = User::where(['id' => 1])->orWhere(['id' => 2, 'firstName' => 'Lars'])->list();
+// $result = User::columns(['id','password'])->where(['id' => 1])->orWhere(['id' => 2, 'firstName' => 'Lars'])->list();
+ $result = User::set(['firstName' => 'Tandy', 'lastName' => 'Libra', 'category' => 'Inger'])->debug()->insert();
 
 Vardump::json(
 	$result

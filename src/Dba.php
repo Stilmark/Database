@@ -186,7 +186,12 @@ class Dba
     function getValues()
     {
         $values = $this->values;
+
         foreach($values AS $column => $value) {
+            if (!in_array($column, $this->fillable)) {
+                unset($values[$column]);
+                continue;
+            }
             if (!in_array($value, ['NOW()','CURDATE()'])) {
                if (!is_null($value)) {
                     $value = $this->sqli->val($value);
@@ -250,6 +255,10 @@ class Dba
 
     function getWhere()
     {
+        if (!$this->where) {
+            return false;
+        }
+
         foreach($this->where AS $n => $where) {
 
             $filter = [];
@@ -356,7 +365,7 @@ class Dba
         $sql = sprintf('INSERT INTO %s %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
 
-        return ['id' => $this->sqli->insert_id() ?? null, 'statement' => $sql];
+        return ['id' => $this->sqli->insert_id() ?? null];
     }
 
     function replace()
@@ -370,7 +379,7 @@ class Dba
         $sql = sprintf('REPLACE INTO %s %s', $this->table, $this->getValues());
         $this->sqli->query($sql);
 
-        return ['id' => $this->sqli->insert_id(), 'statement' => $sql];
+        return ['id' => $this->sqli->insert_id()];
     }
 
     /*
@@ -388,19 +397,31 @@ class Dba
         $sql = sprintf('UPDATE %s %s WHERE id=%d', $this->table, $this->getValues(), $id);
         $this->sqli->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
+        return ['affected_rows' => $this->sqli->affected_rows()];
     }
 
-    function update()
+    function update($where = false)
     {
-        if (count($this->dates) && in_array('updated_at', $this->dates)) {
+        if ($this->dates && in_array('updated_at', $this->dates)) {
             $this->values(['updated_at' => 'NOW()']);
+        }
+
+        if ($where) {
+            if (is_array($where)) {
+                $this->where($where);
+            } else {
+                $this->where(['id' => $where]);
+            }
+        }
+
+        if (!$this->where) {
+            die('Missing where conditions'.PHP_EOL);
         }
 
         $sql = sprintf('UPDATE %s %s %s', $this->table, $this->getValues(), $this->getWhere());
         $this->sqli->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
+        return ['affected_rows' => $this->sqli->affected_rows()];
     }
 
     /*
@@ -415,7 +436,7 @@ class Dba
         $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
         $this->sqli->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
+        return ['affected_rows' => $this->sqli->affected_rows()];
     }
 
     function truncate()
@@ -423,7 +444,7 @@ class Dba
         $sql = sprintf('TRUNCATE %s', $this->table);
         $this->sqli->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows(), 'statement' => $sql];
+        return ['affected_rows' => $this->sqli->affected_rows()];
     }
 
     /*
@@ -510,6 +531,11 @@ class Dba
     function flatList()
     {
         return $this->listFlat();
+    }
+
+    function insert()
+    {
+        return $this->create();
     }
 
     function set($values = [])

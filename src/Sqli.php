@@ -21,7 +21,7 @@ class Sqli
     function query($sql)
     {
         if ($this->debug) {
-            die($sql);
+            die($sql.PHP_EOL);
         }
         return $this->mysqli->query($sql);        
     }
@@ -29,7 +29,7 @@ class Sqli
     function row($sql)
     {
         if ($this->debug) {
-            die($sql);
+            die($sql.PHP_EOL);
         }
         if ($query = $this->query($sql)) {
             $this->result = $query->fetch_assoc();
@@ -63,7 +63,7 @@ class Sqli
     function list($sql)
     {
         if ($this->debug) {
-            die($sql);
+            die($sql.PHP_EOL);
         }
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
@@ -79,7 +79,7 @@ class Sqli
     function listId($sql, $key = 'id')
     {
         if ($this->debug) {
-            die($sql);
+            die($sql.PHP_EOL);
         }
         if (strpos($key, ' ')) {
             $keys = explode(' ', $key);
@@ -100,7 +100,7 @@ class Sqli
     function groupId($sql, $key = 'id')
     {
         if ($this->debug) {
-            die($sql);
+            die($sql.PHP_EOL);
         }
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
@@ -116,7 +116,7 @@ class Sqli
     function listFlat($sql)
     {
         if ($this->debug) {
-            die($sql);
+            die($sql.PHP_EOL);
         }
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
