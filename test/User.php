@@ -5,6 +5,9 @@ use Stilmark\Database\Dbi;
 class User extends Dbi {
 
     protected static $table = 'users';
+    protected static $hidden = [
+        'password'
+    ];
     protected static $fillable = [
     	'firstName',
     	'lastName',
