@@ -16,11 +16,13 @@ class Dba
 
     function init() {
         $this->table = '';
+        $this->tableAlias = null;
         $this->values = [];
         $this->columns = [];
         $this->visible = [];
         $this->fillable = [];
         $this->dates = [];
+        $this->softDelete = false;
         $this->join = [];
         $this->where = [];
         $this->orderBy = [];
@@ -42,7 +44,8 @@ class Dba
     function table($table)
     {
         if (is_array($table)) {
-            $table = current($table);
+            $this->tableAlias = key($table);
+            $table = current($table).' '.key($table);
         }
         $this->table = $table;
         return $this;
@@ -188,7 +191,7 @@ class Dba
         $values = $this->values;
 
         foreach($values AS $column => $value) {
-            if (!in_array($column, $this->fillable)) {
+            if ($this->fillable && !in_array($column, $this->fillable)) {
                 unset($values[$column]);
                 continue;
             }
@@ -234,7 +237,7 @@ class Dba
                 continue;
             }
             if (!strpos($value, '.') && !strpos($value, '(')) {
-                $columns[$key] = $this->table.'.'.$value;
+                $columns[$key] = ($this->tableAlias ?? $this->table).'.'.$value;
             }
         }
 
@@ -293,18 +296,18 @@ class Dba
                         $value = 'null';
                     }
 
-                    $filter[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' '.$operator.' '.$value;
+                    $filter[] = (!strpos($key, '.') ? ($this->tableAlias ?? $this->table).'.':'').$key.' '.$operator.' '.$value;
 
                 } else {
 
-                    $filter[] = (!strpos($key, '.') ? $this->table.'.':'').$key.' IN ('.$this->sqli->implodeVal($value).')';
+                    $filter[] = (!strpos($key, '.') ? ($this->tableAlias ?? $this->table).'.':'').$key.' IN ('.$this->sqli->implodeVal($value).')';
 
                 }
             }
 
             if (!empty($this->subQuery)) {
                 foreach($this->subQuery AS $key => $query) {
-                    $filter[] = $this->table.'.'.$key.' IN ('.$query.')';
+                    $filter[] = ($this->tableAlias ?? $this->table).'.'.$key.' IN ('.$query.')';
                 }
             }
 
