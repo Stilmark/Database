@@ -459,33 +459,12 @@ class Dba
         return $this->sqli->row( $this->makeSelectQuery() );
     }
 
-    function rowId( $id )
-    {
-        $this->where = ['id' => $id];
-        return $this->row();
-    }
-
     function rowKeys() {
         return $this->sqli->keys( $this->makeSelectQuery() );
     }
 
     function rowValues() {
         return $this->sqli->values( $this->makeSelectQuery() );
-    }
-
-    function first()
-    {
-    	return $this->row();
-    }
-
-    function last( $key = 'id')
-    {
-        // todo: whereSubquery
-        /*
-        $this->where([$key => '(SELECT MAX('.$key.') FROM '.$this->table.')']);
-        die($this->makeSelectQuery());
-    	return $this->sqli->row( $this->makeSelectQuery() );
-        */
     }
 
     /*
@@ -541,6 +520,11 @@ class Dba
     function set($values = [])
     {
         return $this->values($values);
+    }
+
+    function rowId( int $id )
+    {
+        return $this->row($id);
     }
 
     function sql()
