@@ -18,7 +18,8 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Stilmark\\Database\\": "src/"
+            "Stilmark\\Database\\": "src/",
+            "Stilmark\\Test\\": "test/model/"
         }
     }
 }

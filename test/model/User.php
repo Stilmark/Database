@@ -1,5 +1,7 @@
 <?php
 
+namespace Stilmark\Test;
+
 use Stilmark\Database\Dbi;
 
 class User extends Dbi {
@@ -18,12 +20,17 @@ class User extends Dbi {
         'deleted_at'
     ];
 
-    /*
-    protected static $visible = [
-    	'id',
-    	'firstName first_name',
-        'lastName',
-    	'email'
-    ];
-    */
+    public static function get(
+        int $id,
+        array $with = []
+    ) {
+        $result = parent::get($id);
+
+        if (in_array('category', $with)) {
+            $result['category'] = Category::get($result['category_id']);
+        }
+
+        return $result;
+    }
+
 }

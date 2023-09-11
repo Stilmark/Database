@@ -24,6 +24,7 @@ class Dba
         $this->dates = [];
         $this->softDelete = false;
         $this->join = [];
+        $this->with = [];
         $this->where = [];
         $this->orderBy = [];
         $this->groupBy = [];
@@ -35,6 +36,37 @@ class Dba
 
     public static function instance() {
         return new Dba();
+    }
+
+    /*
+     * Getters
+     */
+
+    function get($conditions)
+    {
+        if (!is_array($conditions)) {
+            $conditions = ['id' => $conditions];
+        }
+
+        if ($this->softDelete) {
+            $conditions['deleted_at : IS'] = null;
+        }
+
+        return $this->where($conditions)->row();
+    }
+
+    function getAll(array $conditions = [])
+    {
+        if ($this->softDelete) {
+            $conditions['deleted_at : IS'] = null;
+        }
+        return $this->where($conditions)->list();
+    }
+
+    function with(array $tables)
+    {
+        $this->with = $tables;
+        return $this;
     }
 
     /*
@@ -454,11 +486,17 @@ class Dba
      * Fetch rows
      */
 
-    function row( int $id = 0 )
+    function row( $where = false )
     {
-        if ($id > 0) {
-            $this->where = ['id' => $id];
+
+        if ($where) {
+            if (is_array($where)) {
+                $this->where($where);
+            } else {
+                $this->where(['id' => $where]);
+            }
         }
+
         return $this->sqli->row( $this->makeSelectQuery() );
     }
 

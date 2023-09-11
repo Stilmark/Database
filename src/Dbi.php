@@ -41,24 +41,5 @@ class Dbi {
         }
     }
 
-    public static function get($conditions) {
-        if (!is_array($conditions)) {
-            $conditions = ['id' => $conditions];
-        }
-
-        if (static::softDelete) {
-            $conditions['deleted_at : IS'] = null;
-        }
-        return self::where($conditions)->row();
-    }
-
-    public static function getAll(array $conditions = []) {
-
-        if (static::softDelete) {
-            $conditions['deleted_at : IS'] = null;
-        }
-        return self::where($conditions)->list();
-    }
-
 }
 
