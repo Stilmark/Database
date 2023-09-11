@@ -35,7 +35,7 @@ class Dbi {
         }
 
         if (!empty($arguments)) {
-            return $dba->$name($arguments);
+            return $dba->$name(...$arguments);
         } else {
             return $dba->$name();
         }

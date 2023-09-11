@@ -22,7 +22,10 @@ $user = $db->set(['firstName' => 'Trevor','lastName' => 'Smith'])->debug()->inse
 
 // $result = User::get(id: 4, with: ['category']);
 
-$result = User::getAll(['category_id' => 1]);
+$result = User::getGrouped(
+	column: 'category_id',
+	//conditions: ['id' => [1,2,3]]
+);
 
 Vardump::json(
 	$result

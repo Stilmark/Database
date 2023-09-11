@@ -18,72 +18,73 @@ class Sqli
         $this->mysqli->set_charset('utf8');
 	}
 
-    function query($sql)
+    public function __call($method, $args){
+
+        $this->debug(current($args));
+
+        if(method_exists($this, $method)) {
+            return $this->$method(...$args);
+        } else {
+            throw new Exception("Method doesn't exist");
+        }
+    }
+
+    private function debug($sql)
     {
         if ($this->debug) {
-            die($sql.PHP_EOL);
+            die($sql.';'.PHP_EOL);
         }
+    }
+
+    private function query($sql)
+    {
         return $this->mysqli->query($sql);        
     }
 
-    function row($sql)
+    private function row($sql)
     {
-        if ($this->debug) {
-            die($sql.PHP_EOL);
-        }
         if ($query = $this->query($sql)) {
             $this->result = $query->fetch_assoc();
             $query->free();
             return $this->result;
-        } else {
-            return $this->invalidQuery('row', $sql);
         }
     }
 
-    function key($sql)
+    private function key($sql)
     {
         return array_keys($this->row($sql))[0];
     }
 
-    function keys($sql)
+    private function keys($sql)
     {
         return array_keys($this->row($sql));
     }
 
-    function value($sql)
+    private function value($sql)
     {
         return array_values($this->row($sql))[0];
     }
 
-    function values($sql)
+    private function values($sql)
     {
         return array_values($this->row($sql));
     }
 
-    function list($sql)
+    private function list($sql)
     {
-        if ($this->debug) {
-            die($sql.PHP_EOL);
-        }
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[] = $row;
             }
             $query->free();
             return $this->result;
-        } else {
-            return $this->invalidQuery('list', $sql);
         }
     }
 
-    function listId($sql, $key = 'id')
+    private function listId($sql, $key = 'id')
     {
-        if ($this->debug) {
-            die($sql.PHP_EOL);
-        }
         if (strpos($key, ' ')) {
             $keys = explode(' ', $key);
-
         }
 
         if ($query = $this->query($sql)) {
@@ -92,40 +93,30 @@ class Sqli
             }
             $query->free();
             return $this->result;
-        } else {
-            return $this->invalidQuery('listId', $sql);
         }
     }
 
-    function groupId($sql, $key = 'id')
+    private function groupId($sql, $key = 'id')
     {
-        if ($this->debug) {
-            die($sql.PHP_EOL);
-        }
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[$row[$key]][] = $row;
             }
             $query->free();
             return $this->result;
-        } else {
-            return $this->invalidQuery('groupId', $sql);
         }
     }
 
-    function listFlat($sql)
+    private function listFlat($sql)
     {
-        if ($this->debug) {
-            die($sql.PHP_EOL);
-        }
+        $this->debug($sql);
+
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
                 $this->result[current($row)] = next($row);
             }
             $query->free();
             return $this->result;
-        } else {
-            return $this->invalidQuery('listFlat', $sql);
         }
     }
 
@@ -137,11 +128,6 @@ class Sqli
     function affected_rows()
     {
         return $this->mysqli->affected_rows;
-    }
-
-    function invalidQuery($type, $sql)
-    {
-        die('Invalid query ('.$type.'): ' . $sql);
     }
 
     function implodeVal($array, $isString = false)
@@ -167,7 +153,7 @@ class Sqli
         return (string)(float)$n === (string)$n;
     }
 
-    static function instance()
+    public static function instance()
     {
         return new sqli();
     }
@@ -183,17 +169,17 @@ class Sqli
     }
 
     // Aliases
-    function idList($sql)
+    private function idList($sql)
     {
         return $this->listId($sql);
     }
 
-    function flatList($sql)
+    private function flatList($sql)
     {
         return $this->listFlat($sql);
     }
 
-    function groupedList($sql)
+    private function groupedList($sql)
     {
         return $this->groupId($sql);
     }

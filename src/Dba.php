@@ -42,8 +42,9 @@ class Dba
      * Getters
      */
 
-    function get($conditions)
-    {
+    function get(
+        $conditions
+    ){
         if (!is_array($conditions)) {
             $conditions = ['id' => $conditions];
         }
@@ -55,12 +56,23 @@ class Dba
         return $this->where($conditions)->row();
     }
 
-    function getAll(array $conditions = [])
-    {
+    function getAll(
+        array $conditions = []
+    ){
         if ($this->softDelete) {
             $conditions['deleted_at : IS'] = null;
         }
         return $this->where($conditions)->list();
+    }
+
+    function getGrouped(
+        string $column,
+        array $conditions = []
+    ){
+        if ($this->softDelete) {
+            $conditions['deleted_at : IS'] = null;
+        }
+        return $this->where($conditions)->groupId( $column );
     }
 
     function with(array $tables)
@@ -566,11 +578,6 @@ class Dba
     function rowId( int $id )
     {
         return $this->row($id);
-    }
-
-    function sql()
-    {
-        return $this->makeSelectQuery();
     }
 
 }
