@@ -30,12 +30,11 @@ class Dbi {
             $dba->softDelete = static::softDelete;
         }
 
-        if (count($arguments) == 1 && isset($arguments[0])) {
-            $arguments = $arguments[0];
-        }
-
         if (!empty($arguments)) {
             if (is_string($arguments) || is_int(key($arguments))) {
+                if (count($arguments) == 1 && isset($arguments[0])) { // Handle non-array arguments
+                    $arguments = $arguments[0];
+                }
                 return $dba->$name($arguments); // function takes single parameter
             } else {
                 return $dba->$name(...$arguments); // function takes multiple parameters
