@@ -35,7 +35,7 @@ class Dbi {
         }
 
         if (!empty($arguments)) {
-            if (is_int(key($arguments))) {
+            if (is_string($arguments) || is_int(key($arguments))) {
                 return $dba->$name($arguments); // function takes single parameter
             } else {
                 return $dba->$name(...$arguments); // function takes multiple parameters
