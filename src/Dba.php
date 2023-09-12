@@ -43,8 +43,12 @@ class Dba
      */
 
     function get(
-        $conditions
+        $conditions = null
     ){
+        if (is_null($conditions)) {
+            return [];
+        }
+
         if (!is_array($conditions)) {
             $conditions = ['id' => $conditions];
         }

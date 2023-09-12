@@ -31,10 +31,17 @@ class Dbi {
         }
 
         if (!empty($arguments)) {
-            if (is_string($arguments) || is_int(key($arguments))) {
+
+            if (is_string($arguments) || is_int($arguments) || is_int(key($arguments))) {
+
+                if (!isset($arguments[0])) { // Null handling
+                    return $dba->$name();
+                }
+
                 if (count($arguments) == 1 && isset($arguments[0])) { // Handle non-array arguments
                     $arguments = $arguments[0];
                 }
+                
                 return $dba->$name($arguments); // function takes single parameter
             } else {
                 return $dba->$name(...$arguments); // function takes multiple parameters
