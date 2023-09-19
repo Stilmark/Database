@@ -93,9 +93,11 @@ class Dba
     {
         if (is_array($table)) {
             $this->tableAlias = key($table);
-            $table = current($table).' '.key($table);
+            $this->tableName = current($table);
+            $this->table = $this->tableName.' '.$this->tableAlias;
+        } else {
+            $this->table = $this->tableName = $table;
         }
-        $this->table = $table;
         return $this;
     }
 
@@ -413,7 +415,7 @@ class Dba
         if (count($this->dates) && in_array('updated_at', $this->dates)) {
             $this->values(['updated_at' => 'NOW()']);
         }
-        $sql = sprintf('INSERT INTO %s %s', $this->table, $this->getValues());
+        $sql = sprintf('INSERT INTO %s %s', $this->tableName, $this->getValues());
         $this->sqli->query($sql);
 
         return ['id' => $this->sqli->insert_id() ?? null];
