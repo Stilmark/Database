@@ -24,7 +24,9 @@ class Dbi {
         }
         if (defined('static::dates')) {
             $dba->dates(static::dates);
-            $dba->fillable(static::dates);
+            if ($dba->fillable) {
+                $dba->fillable(static::dates);    
+            }
         }
         if (defined('static::softDelete')) {
             $dba->softDelete = static::softDelete;

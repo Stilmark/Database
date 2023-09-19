@@ -17,9 +17,14 @@ $user = $db->set(['firstName' => 'Trevor','lastName' => 'Smith'])->debug()->inse
 
 // $users = User::columns(['id', 'firstName', 'lastName'])->where(['firstName' => ['Hans']])->list('id');
 
-$result = User::columns(['id','password'])->where(['id' => 1])->orWhere(['id' => 2, 'firstName' => 'Lars'])->debug()->list();
+// $result = User::columns(['id','password'])->where(['id' => 1])->orWhere(['id' => 2, 'firstName' => 'Lars'])->debug()->list();
 
-// $result = User::set(['firstName' => 'Tandy', 'lastName' => 'Libra', 'category' => 'Inger']);//->debug()->insert();
+$result = User::set(['firstName' => 'Tandy', 'lastName' => 'Libra', 'category' => 'Inger'])->debug()->insert();
+
+Vardump::json(
+	$result
+	, JSON_PRETTY_PRINT
+);
 
 // $result = User::get(id: 4, with: ['category']);
 
