@@ -31,11 +31,3 @@ MySQLi functions, Query builder and Model instance.
 
 https://stilmark-projects.gitbook.io/database
 
-## Support this project with a :coffee: or a :croissant: ##
-
-**$BTC:** `1e1C89CNZAGX8eyoHeQuBb32HSLC7idMo`
-
-**$DOT:** `1kmH8qHKp8E4aDpoFqD9rn4NKadoGhVFiEvdp7najZZT165`
-
-**$USDT:** `0x8FB377c6770BBaa1303db85f5188375Bd633E149`
-
