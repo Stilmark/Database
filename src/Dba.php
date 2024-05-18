@@ -335,7 +335,7 @@ class Dba
                     }
 
                     if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
-                        if (!preg_match('/^[a-z_]+\(.*\)$/i', $value) && !is_null($value)) {
+                        if (!is_null($value) && !preg_match('/^[a-z_]+\(.*\)$/i', $value)) {
                             $value = $this->sqli->val($value);
                         }
                     } else {
