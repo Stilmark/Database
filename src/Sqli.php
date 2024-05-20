@@ -57,7 +57,8 @@ class Sqli
 
     private function keys($sql)
     {
-        return array_keys($this->row($sql));
+        $row = $this->row($sql) ?? [];
+        return array_keys($row);
     }
 
     private function value($sql)
@@ -67,7 +68,8 @@ class Sqli
 
     private function values($sql)
     {
-        return array_values($this->row($sql));
+        $row = $this->row($sql) ?? [];
+        return array_values($row);
     }
 
     private function list($sql)

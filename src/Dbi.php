@@ -22,10 +22,13 @@ class Dbi {
         if (defined('static::fillable')) {
             $dba->fillable(static::fillable);
         }
+        if (defined('static::hidden')) {
+            $dba->hidden(static::hidden);
+        }
         if (defined('static::dates')) {
             $dba->dates(static::dates);
             if ($dba->fillable) {
-                $dba->fillable(static::dates);    
+                $dba->fillable(static::dates);
             }
         }
         if (defined('static::softDelete')) {

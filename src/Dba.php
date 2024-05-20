@@ -20,69 +20,25 @@ class Dba
         $this->values = [];
         $this->columns = [];
         $this->visible = [];
+        $this->hidden = [];
         $this->fillable = [];
         $this->dates = [];
         $this->softDelete = false;
         $this->join = [];
         $this->with = [];
         $this->where = [];
+        $this->operators = ['=', '!=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', 'IS', 'IS NOT', 'IN', 'NOT IN'];
         $this->orderBy = [];
         $this->groupBy = [];
         $this->having = [];
         $this->limit = [];
+        $this->persist = false;
         $this->subQuery = [];
         $this->debug = false;
     }
 
     public static function instance() {
         return new Dba();
-    }
-
-    /*
-     * Getters
-     */
-
-    function get(
-        $conditions = null
-    ){
-        if (is_null($conditions)) {
-            return [];
-        }
-
-        if (!is_array($conditions)) {
-            $conditions = ['id' => $conditions];
-        }
-
-        if ($this->softDelete) {
-            $conditions['deleted_at : IS'] = null;
-        }
-
-        return $this->where($conditions)->row();
-    }
-
-    function getAll(
-        array $conditions = []
-    ){
-        if ($this->softDelete) {
-            $conditions['deleted_at : IS'] = null;
-        }
-        return $this->where($conditions)->list();
-    }
-
-    function getGrouped(
-        string $column,
-        array $conditions = []
-    ){
-        if ($this->softDelete) {
-            $conditions['deleted_at : IS'] = null;
-        }
-        return $this->where($conditions)->groupId( $column );
-    }
-
-    function with(array $tables)
-    {
-        $this->with = $tables;
-        return $this;
     }
 
     /*
@@ -128,6 +84,15 @@ class Dba
         return $this;
     }
 
+    function hidden($columns = [])
+    {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+        $this->hidden = $columns;
+        return $this;
+    }
+
     function visible($columns = [])
     {
         if (!is_array($columns)) {
@@ -159,6 +124,17 @@ class Dba
     {
         $this->where[] = ['operator' => 'OR', 'conditions' => $conditions];
         return $this;
+    }
+
+    function setConditions($conditions)
+    {
+        if ($conditions) {
+            if (is_array($conditions)) {
+                $this->where($conditions);
+            } else {
+                $this->where(['id' => $conditions]);
+            }
+        }
     }
 
     function orderBy($orderBy = [])
@@ -277,6 +253,12 @@ class Dba
             }
         }
 
+        if ($this->hidden) {
+            foreach($this->hidden AS $key) {
+                $columns[$key] = 'null ' . $key;
+            }
+        }
+
         foreach($columns AS $key => $value) {
             if (count($this->visible)) {
                 if (isset($this->visible[$value])) {
@@ -286,7 +268,7 @@ class Dba
                 }
                 continue;
             }
-            if (!strpos($value, '.') && !strpos($value, '(')) {
+            if (!strpos($value, '.') && !strpos($value, '(') && !str_starts_with($value, 'null')) {
                 $columns[$key] = ($this->tableAlias ?? $this->table).'.'.$value;
             }
         }
@@ -312,29 +294,40 @@ class Dba
             return false;
         }
 
+        if ($this->softDelete && !$this->persist) {
+            array_unshift($this->where, [
+                'operator' => 'AND',
+                'conditions' => [
+                    'deleted_at IS' => null
+                ]
+            ]);
+        }
+
         foreach($this->where AS $n => $where) {
 
             $filter = [];
 
-            foreach($where['conditions'] AS $key => $value) {
+            foreach($where['conditions'] AS $column => $value) {
+
+                $column = trim(preg_replace('/\s+/', ' ', $column));
+                $operator = '=';
+
+                if (strpos($column, ' ')) {
+                    $arg = explode(' ', $column);
+                    $column = $arg[0];
+                    $end = implode( ' ',array_slice($arg, 1));
+                    $operator = strtoupper($end);
+                } elseif (strpos($column, ':')) {
+                    $arg = explode(':',$column);
+                    if (count($arg) == 2) {
+                        $column = trim($arg[0]);
+                        $operator = strtoupper(trim(end($arg)));
+                    }
+                }
 
                 if (!is_array($value)) {
 
-                    unset($operator);
-
-                    if (strpos($key, ':')) {
-                        $arg = explode(':',$key);
-                        if (count($arg) == 2) {
-                            $key = trim($arg[0]);
-                            $operator = strtoupper(trim($arg[1]));
-                        }
-                    }
-
-                    if (!isset($operator)) {
-                        $operator = '=';
-                    }
-
-                    if (in_array($operator, ['=', '>=', '<=', '>', '<', 'LIKE', 'NOT LIKE', '!=', 'IS', 'IS NOT'])) {
+                    if (in_array($operator, $this->operators)) {
                         if (!is_null($value) && !preg_match('/^[a-z_]+\(.*\)$/i', $value)) {
                             $value = $this->sqli->val($value);
                         }
@@ -346,12 +339,15 @@ class Dba
                         $value = 'null';
                     }
 
-                    $filter[] = (!strpos($key, '.') ? ($this->tableAlias ?? $this->table).'.':'').$key.' '.$operator.' '.$value;
+                    $filter[] = (!strpos($column, '.') ? ($this->tableAlias ?? $this->table).'.':'').$column.' '.$operator.' '.$value;
 
                 } else {
 
-                    $filter[] = (!strpos($key, '.') ? ($this->tableAlias ?? $this->table).'.':'').$key.' IN ('.$this->sqli->implodeVal($value).')';
+                    if (!in_array($operator, ['IN', 'NOT IN'])) {
+                        $operator = 'IN';
+                    }
 
+                    $filter[] = (!strpos($column, '.') ? ($this->tableAlias ?? $this->table).'.':'').$column.' '.$operator.' ('.$this->sqli->implodeVal($value).')';
                 }
             }
 
@@ -362,7 +358,7 @@ class Dba
             }
 
             if (count($filter) > 0) {
-                $filterSet[] = ($n > 0 ? $where['operator']:'').' ('.implode(' AND ', $filter).')';
+                $filterSet[] = ($n > 0 ? $where['operator'].' ':'').'('.implode(' AND ', $filter).')';
             }
         }
 
@@ -406,6 +402,8 @@ class Dba
 
     function create()
     {
+        $this->persist = true;
+
         if (!count($this->values)) {
             return false;
         }
@@ -423,6 +421,8 @@ class Dba
 
     function replace()
     {
+        $this->persist = true;
+
         if (!count($this->values)) {
             return false;
         }
@@ -441,6 +441,8 @@ class Dba
 
     function updateById(Int $id, Array $values = [])
     {
+        $this->persist = true;
+
         if (count($values)) {
             $this->values($values);
         }
@@ -453,18 +455,13 @@ class Dba
         return ['affected_rows' => $this->sqli->affected_rows()];
     }
 
-    function update($where = false)
+    function update($conditions = false)
     {
+        $this->persist = true;
+        $this->setConditions($conditions);
+
         if ($this->dates && in_array('updated_at', $this->dates)) {
             $this->values(['updated_at' => 'NOW()']);
-        }
-
-        if ($where) {
-            if (is_array($where)) {
-                $this->where($where);
-            } else {
-                $this->where(['id' => $where]);
-            }
         }
 
         if (!$this->where) {
@@ -481,13 +478,21 @@ class Dba
      * Delete
      */
 
-    function delete()
+    function delete($conditions = false)
     {
+        $this->persist = true;
+        $this->setConditions($conditions);
+
         if (!count($this->where)) {
             die('Delete query requires WHERE scope');
         }
-        $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
-        $this->sqli->query($sql);
+        if ($this->softDelete) {
+            $sql = sprintf('UPDATE %s SET deleted_at = NOW() %s', $this->table, $this->getWhere());
+            $this->sqli->query($sql);
+        } else {
+            $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
+            $this->sqli->query($sql);
+        }
 
         return ['affected_rows' => $this->sqli->affected_rows()];
     }
@@ -501,20 +506,49 @@ class Dba
     }
 
     /*
+     * Getters
+     */
+
+    function get(
+        $conditions = null
+    ){
+        if (is_null($conditions)) {
+            return [];
+        }
+
+        if (!is_array($conditions)) {
+            $conditions = ['id' => $conditions];
+        }
+
+        return $this->where($conditions)->row();
+    }
+
+    function getAll(
+        array $conditions = []
+    ){
+        return $this->where($conditions)->list();
+    }
+
+    function getGrouped(
+        string $column,
+        array $conditions = []
+    ){
+        return $this->where($conditions)->groupId( $column );
+    }
+
+    function with(array $tables)
+    {
+        $this->with = $tables;
+        return $this;
+    }
+
+    /*
      * Fetch rows
      */
 
-    function row( $where = false )
+    function row( $conditions = false )
     {
-
-        if ($where) {
-            if (is_array($where)) {
-                $this->where($where);
-            } else {
-                $this->where(['id' => $where]);
-            }
-        }
-
+        $this->setConditions($conditions);
         return $this->sqli->row( $this->makeSelectQuery() );
     }
 
@@ -522,7 +556,8 @@ class Dba
         return $this->sqli->keys( $this->makeSelectQuery() );
     }
 
-    function rowValues() {
+    function rowValues( $conditions = false ) {
+        $this->setConditions($conditions);
         return $this->sqli->values( $this->makeSelectQuery() );
     }
 
