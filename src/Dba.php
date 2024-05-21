@@ -312,17 +312,17 @@ class Dba
                 $column = trim(preg_replace('/\s+/', ' ', $column));
                 $operator = '=';
 
-                if (strpos($column, ' ')) {
-                    $arg = explode(' ', $column);
-                    $column = $arg[0];
-                    $end = implode( ' ',array_slice($arg, 1));
-                    $operator = strtoupper($end);
-                } elseif (strpos($column, ':')) {
+                if (strpos($column, ':')) {
                     $arg = explode(':',$column);
                     if (count($arg) == 2) {
                         $column = trim($arg[0]);
                         $operator = strtoupper(trim(end($arg)));
                     }
+                } elseif (strpos($column, ' ')) {
+                    $arg = explode(' ', $column);
+                    $column = $arg[0];
+                    $end = implode( ' ',array_slice($arg, 1));
+                    $operator = strtoupper($end);
                 }
 
                 if (!is_array($value)) {
