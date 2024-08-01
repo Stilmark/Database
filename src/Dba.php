@@ -2,15 +2,21 @@
 
 namespace Stilmark\Database;
 
+use Stilmark\Database\Pdo;
 use Stilmark\Database\Sqli;
 
 class Dba
 {
-    protected $sqli;
+    protected $db;
 
     function __construct()
     {
-    	$this->sqli = (isset($GLOBALS['Sqli'])) ? $GLOBALS['Sqli']:new Sqli();
+        if ($_ENV['DB_CONNECTION'] == 'mysqli') {
+            $this->db = new Sqli();
+        } else {
+            $this->db = new PdoClass();
+        }
+    	
         $this->init();
     }
 
@@ -188,7 +194,7 @@ class Dba
 
     function debug()
     {
-        $this->sqli->debug = $this->debug = true;
+        $this->db->debug = $this->debug = true;
         return $this;
     }
 
@@ -223,7 +229,7 @@ class Dba
             }
             if (!in_array($value, ['NOW()','CURDATE()'])) {
                if (!is_null($value)) {
-                    $value = $this->sqli->val($value);
+                    $value = $this->db->val($value);
                 } else {
                     $value = 'null';
                 }
@@ -329,7 +335,7 @@ class Dba
 
                     if (in_array($operator, $this->operators)) {
                         if (!is_null($value) && !preg_match('/^[a-z_]+\(.*\)$/i', $value)) {
-                            $value = $this->sqli->val($value);
+                            $value = $this->db->val($value);
                         }
                     } else {
                         $operator = '=';
@@ -347,7 +353,7 @@ class Dba
                         $operator = 'IN';
                     }
 
-                    $filter[] = (!strpos($column, '.') ? ($this->tableAlias ?? $this->table).'.':'').$column.' '.$operator.' ('.$this->sqli->implodeVal($value).')';
+                    $filter[] = (!strpos($column, '.') ? ($this->tableAlias ?? $this->table).'.':'').$column.' '.$operator.' ('.$this->db->implodeVal($value).')';
                 }
             }
 
@@ -414,9 +420,9 @@ class Dba
             $this->values(['updated_at' => 'NOW()']);
         }
         $sql = sprintf('INSERT INTO %s %s', $this->tableName, $this->getValues());
-        $this->sqli->query($sql);
+        $this->db->query($sql);
 
-        return ['id' => $this->sqli->insert_id() ?? null];
+        return ['id' => $this->db->insert_id() ?? null];
     }
 
     function replace()
@@ -430,9 +436,9 @@ class Dba
             $this->values(['updated_at' => 'NOW()']);
         }
         $sql = sprintf('REPLACE INTO %s %s', $this->table, $this->getValues());
-        $this->sqli->query($sql);
+        $this->db->query($sql);
 
-        return ['id' => $this->sqli->insert_id()];
+        return ['id' => $this->db->insert_id()];
     }
 
     /*
@@ -450,9 +456,9 @@ class Dba
             $this->values(['updated_at' => 'NOW()']);
         }
         $sql = sprintf('UPDATE %s %s WHERE id=%d', $this->table, $this->getValues(), $id);
-        $this->sqli->query($sql);
+        $this->db->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows()];
+        return ['affected_rows' => $this->db->affected_rows()];
     }
 
     function update($conditions = false)
@@ -469,9 +475,9 @@ class Dba
         }
 
         $sql = sprintf('UPDATE %s %s %s', $this->table, $this->getValues(), $this->getWhere());
-        $this->sqli->query($sql);
+        $this->db->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows()];
+        return ['affected_rows' => $this->db->affected_rows()];
     }
 
     /*
@@ -488,21 +494,21 @@ class Dba
         }
         if ($this->softDelete) {
             $sql = sprintf('UPDATE %s SET deleted_at = NOW() %s', $this->table, $this->getWhere());
-            $this->sqli->query($sql);
+            $this->db->query($sql);
         } else {
             $sql = sprintf('DELETE FROM %s %s', $this->table, $this->getWhere());
-            $this->sqli->query($sql);
+            $this->db->query($sql);
         }
 
-        return ['affected_rows' => $this->sqli->affected_rows()];
+        return ['affected_rows' => $this->db->affected_rows()];
     }
 
     function truncate()
     {
         $sql = sprintf('TRUNCATE %s', $this->table);
-        $this->sqli->query($sql);
+        $this->db->query($sql);
 
-        return ['affected_rows' => $this->sqli->affected_rows()];
+        return ['affected_rows' => $this->db->affected_rows()];
     }
 
     /*
@@ -549,16 +555,16 @@ class Dba
     function row( $conditions = false )
     {
         $this->setConditions($conditions);
-        return $this->sqli->row( $this->makeSelectQuery() );
+        return $this->db->row( $this->makeSelectQuery() );
     }
 
     function rowKeys() {
-        return $this->sqli->keys( $this->makeSelectQuery() );
+        return $this->db->keys( $this->makeSelectQuery() );
     }
 
     function rowValues( $conditions = false ) {
         $this->setConditions($conditions);
-        return $this->sqli->values( $this->makeSelectQuery() );
+        return $this->db->values( $this->makeSelectQuery() );
     }
 
     /*
@@ -568,15 +574,15 @@ class Dba
     function list( $id = null )
     {
     	if ($id != null) {
-    		return $this->sqli->listId( $this->makeSelectQuery(), $id);
+    		return $this->db->listId( $this->makeSelectQuery(), $id);
     	} else {
-    		return $this->sqli->list( $this->makeSelectQuery() );
+    		return $this->db->list( $this->makeSelectQuery() );
     	}
     }
 
     function groupId( $id = 'id' )
     {
-        return $this->sqli->groupId( $this->makeSelectQuery(), $id);
+        return $this->db->groupId( $this->makeSelectQuery(), $id);
     }
 
     function listId( $id = 'id' )
@@ -586,7 +592,7 @@ class Dba
 
     function listFlat()
     {
-        return $this->sqli->listFlat( $this->makeSelectQuery() );
+        return $this->db->listFlat( $this->makeSelectQuery() );
     }
 
     // Aliases
