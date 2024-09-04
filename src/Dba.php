@@ -66,6 +66,11 @@ class Dba
         return $this;
     }
 
+    function includeDeleted() {
+        $this->softDelete = false;
+        return $this;
+    }
+
     function columns($columns = [])
     {
         if (!is_array($columns)) {
