@@ -7,6 +7,12 @@ use Stilmark\Database\Sqli;
 class Dba
 {
     protected $sqli;
+    private ?string $table, $tableAlias, $tableName;
+    private array $values, $columns, $visible, $join, $with, $where, $operators, $orderBy, $groupBy, $having, $limit, $subQuery;
+    private bool $persist, $debug;
+
+    public bool $softDelete;
+    public array $fillable, $dates, $hidden;
 
     function __construct()
     {

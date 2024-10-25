@@ -5,6 +5,10 @@ namespace Stilmark\Database;
 class Sqli
 {
 
+    private bool $debug;
+    private array $result;
+    private object $mysqli;
+
     function __construct()
 	{
         $this->debug = false;
@@ -144,7 +148,7 @@ class Sqli
     {
         // Quote if not a number or a numeric string
         if ($isString || !$this->isDecimalNumber($value)) {
-            $value = "'" .$this->mysqli->real_escape_string($value). "'";
+            $value = "'" .$this->mysqli->real_escape_string($value ?? ''). "'";
         }
 
         return $value;
