@@ -48,7 +48,7 @@ class Sqli
     private function row($sql)
     {
         if ($query = $this->query($sql)) {
-            $this->result = $query->fetch_assoc();
+            $this->result = $query->fetch_assoc() ?? [];
             $query->free();
             return $this->result;
         }
