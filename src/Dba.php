@@ -316,6 +316,8 @@ class Dba
             ]);
         }
 
+        $filterSet = [];
+
         foreach($this->where AS $n => $where) {
 
             $filter = [];

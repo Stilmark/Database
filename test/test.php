@@ -10,7 +10,7 @@ use Stilmark\Test\Category;
 
 
 
-$users = User::limit(limit: 2, offset: 1)->getAll();
+$users = User::limit(10)->getAll();
 
 Vardump::json(
 	$users
