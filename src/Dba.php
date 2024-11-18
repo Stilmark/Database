@@ -8,7 +8,8 @@ class Dba
 {
     protected $sqli;
     private ?string $table, $tableAlias, $tableName;
-    private array $values, $columns, $visible, $join, $with, $where, $operators, $orderBy, $groupBy, $having, $limit, $subQuery;
+    private int $limit, $offset;
+    private array $values, $columns, $visible, $join, $with, $where, $operators, $orderBy, $groupBy, $having, $subQuery;
     private bool $persist, $debug;
 
     public bool $softDelete;
@@ -37,7 +38,8 @@ class Dba
         $this->orderBy = [];
         $this->groupBy = [];
         $this->having = [];
-        $this->limit = [];
+        $this->limit = 0;
+        $this->offset = 0;
         $this->persist = false;
         $this->subQuery = [];
         $this->debug = false;
@@ -401,10 +403,10 @@ class Dba
 
     function getLimit()
     {
-        if (empty($this->limit)) {
+        if ($this->limit == 0) {
             return false;
         }
-        return 'LIMIT '.(isset($this->offset) ? $this->offset.',':'').$this->limit;
+        return 'LIMIT '.$this->offset.','.$this->limit;
     }
 
     /*

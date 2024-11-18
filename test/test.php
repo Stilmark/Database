@@ -8,6 +8,15 @@ use Stilmark\Parse\Vardump;
 use Stilmark\Test\User;
 use Stilmark\Test\Category;
 
+
+
+$users = User::limit(limit: 2, offset: 1)->getAll();
+
+Vardump::json(
+	$users
+	, JSON_PRETTY_PRINT
+);
+
 /*
 $db = new Dba();
 $db->table('users');
