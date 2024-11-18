@@ -4,10 +4,9 @@ namespace Stilmark\Database;
 
 class Sqli
 {
-
-    private bool $debug;
     private array $result;
     private object $mysqli;
+    public bool $debug;
 
     function __construct()
 	{
