@@ -1,6 +1,6 @@
 <?php
 
-namespace Stilmark\Test;
+namespace Stilmark\Demo;
 
 use Stilmark\Database\Dbi;
 

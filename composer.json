@@ -5,7 +5,8 @@
     "require": {
         "php": ">=7",
         "symfony/dotenv": "*",
-        "stilmark/parse": ">=v0.70"
+        "stilmark/parse": ">=v0.70",
+        "stilmark/router": "dev-main"
     },
     "license": "MIT",
     "authors": [
@@ -19,7 +20,7 @@
     "autoload": {
         "psr-4": {
             "Stilmark\\Database\\": "src/",
-            "Stilmark\\Test\\": "test/model/"
+            "Stilmark\\Demo\\": "demo/model/"
         }
     }
 }
