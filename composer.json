@@ -5,8 +5,7 @@
     "require": {
         "php": ">=7",
         "symfony/dotenv": "*",
-        "stilmark/parse": ">=v0.70",
-        "stilmark/router": "dev-main"
+        "stilmark/parse": ">=v0.70"
     },
     "license": "MIT",
     "authors": [
