@@ -41,6 +41,7 @@ class Dba
         $this->limit = 0;
         $this->offset = 0;
         $this->persist = false;
+        $this->silentUpdate = false;
         $this->subQuery = [];
         $this->debug = false;
     }
@@ -196,6 +197,12 @@ class Dba
     function subQuery($key = 'id', $query = '')
     {
         $this->subQuery[$key] = $query;
+        return $this;
+    }
+
+    function silentUpdate()
+    {
+        $this->silentUpdate = true;
         return $this;
     }
 
@@ -461,7 +468,7 @@ class Dba
         if (count($values)) {
             $this->values($values);
         }
-        if (count($this->dates) && in_array('updated_at', $this->dates)) {
+        if (count($this->dates) && !$this->silentUpdate && in_array('updated_at', $this->dates)) {
             $this->values(['updated_at' => 'NOW()']);
         }
         $sql = sprintf('UPDATE %s %s WHERE id=%d', $this->table, $this->getValues(), $id);
@@ -475,7 +482,7 @@ class Dba
         $this->persist = true;
         $this->setConditions($conditions);
 
-        if ($this->dates && in_array('updated_at', $this->dates)) {
+        if ($this->dates && !$this->silentUpdate && in_array('updated_at', $this->dates)) {
             $this->values(['updated_at' => 'NOW()']);
         }
 
