@@ -12,7 +12,7 @@ class Dba
     private array $values, $columns, $visible, $join, $with, $where, $operators, $orderBy, $groupBy, $having, $subQuery;
     private bool $persist, $debug;
 
-    public bool $softDelete;
+    public bool $softDelete, $silentUpdate;
     public array $fillable, $dates, $hidden;
 
     function __construct()
