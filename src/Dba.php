@@ -519,6 +519,12 @@ class Dba
         return ['affected_rows' => $this->sqli->affected_rows()];
     }
 
+    function hardDelete($conditions = false)
+    {
+        $this->softDelete = false;
+        return $this->delete($conditions);
+    }
+
     function truncate()
     {
         $sql = sprintf('TRUNCATE %s', $this->table);
