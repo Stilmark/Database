@@ -12,7 +12,12 @@ class Sqli
 	{
         $this->debug = false;
         $this->result = [];
-        $this->mysqli = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $_ENV['DB_DATABASE']);
+        $this->mysqli = mysqli_connect(
+            getenv('DB_HOST'),
+            getenv('DB_USERNAME'),
+            getenv('DB_PASSWORD'),
+            getenv('DB_DATABASE')
+        );
 
         if ($this->mysqli->connect_error) {
             die('Database error: ' . $this->mysqli->connect_error);
