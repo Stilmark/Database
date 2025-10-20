@@ -13,7 +13,7 @@ class Dba
     private bool $persist, $debug;
 
     public bool $softDelete, $silentUpdate;
-    public array $fillable, $dates, $hidden;
+    public array $fillable, $dates, $hidden, $json;
 
     function __construct()
     {
@@ -30,6 +30,7 @@ class Dba
         $this->hidden = [];
         $this->fillable = [];
         $this->dates = [];
+        $this->json = [];
         $this->softDelete = false;
         $this->join = [];
         $this->with = [];
@@ -104,6 +105,15 @@ class Dba
             $columns = [$columns];
         }
         $this->hidden = $columns;
+        return $this;
+    }
+
+    function json($columns = [])
+    {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+        $this->json = $columns;
         return $this;
     }
 
@@ -577,7 +587,7 @@ class Dba
     function row( $conditions = false )
     {
         $this->setConditions($conditions);
-        return $this->sqli->row( $this->makeSelectQuery() );
+        return $this->sqli->row( $this->makeSelectQuery(), $this->json );
     }
 
     function rowKeys() {
@@ -596,15 +606,15 @@ class Dba
     function list( $id = null )
     {
     	if ($id != null) {
-    		return $this->sqli->listId( $this->makeSelectQuery(), $id);
+    		return $this->sqli->listId( $this->makeSelectQuery(), $id, $this->json);
     	} else {
-    		return $this->sqli->list( $this->makeSelectQuery() );
+    		return $this->sqli->list( $this->makeSelectQuery(), $this->json );
     	}
     }
 
     function groupId( $id = 'id' )
     {
-        return $this->sqli->groupId( $this->makeSelectQuery(), $id);
+        return $this->sqli->groupId( $this->makeSelectQuery(), $id, $this->json);
     }
 
     function listId( $id = 'id' )

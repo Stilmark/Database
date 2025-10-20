@@ -9,14 +9,14 @@ class Sqli
     public bool $debug;
 
     function __construct()
-	{
+	{        
         $this->debug = false;
         $this->result = [];
         $this->mysqli = mysqli_connect(
-            getenv('DB_HOST'),
-            getenv('DB_USERNAME'),
-            getenv('DB_PASSWORD'),
-            getenv('DB_DATABASE')
+            $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost',
+            $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?: '',
+            $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '',
+            $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?: null
         );
 
         if ($this->mysqli->connect_error) {
@@ -44,17 +44,33 @@ class Sqli
         }
     }
 
+    private function decodeJsonFields($row, $jsonFields = [])
+    {
+        if (empty($jsonFields) || empty($row)) {
+            return $row;
+        }
+        
+        foreach ($jsonFields as $field) {
+            if (isset($row[$field]) && !is_null($row[$field])) {
+                $decoded = json_decode($row[$field], true);
+                $row[$field] = $decoded !== null ? $decoded : $row[$field];
+            }
+        }
+        
+        return $row;
+    }
+
     private function query($sql)
     {
         return $this->mysqli->query($sql);        
     }
 
-    private function row($sql)
+    private function row($sql, $jsonFields = [])
     {
         if ($query = $this->query($sql)) {
             $this->result = $query->fetch_assoc() ?? [];
             $query->free();
-            return $this->result;
+            return $this->decodeJsonFields($this->result, $jsonFields);
         }
     }
 
@@ -80,18 +96,18 @@ class Sqli
         return array_values($row);
     }
 
-    private function list($sql)
+    private function list($sql, $jsonFields = [])
     {
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
-                $this->result[] = $row;
+                $this->result[] = $this->decodeJsonFields($row, $jsonFields);
             }
             $query->free();
             return $this->result;
         }
     }
 
-    private function listId($sql, $key = 'id')
+    private function listId($sql, $key = 'id', $jsonFields = [])
     {
         if (strpos($key, ' ')) {
             $keys = explode(' ', $key);
@@ -99,18 +115,18 @@ class Sqli
 
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
-                $this->result[$row[$key]] = $row;
+                $this->result[$row[$key]] = $this->decodeJsonFields($row, $jsonFields);
             }
             $query->free();
             return $this->result;
         }
     }
 
-    private function groupId($sql, $key = 'id')
+    private function groupId($sql, $key = 'id', $jsonFields = [])
     {
         if ($query = $this->query($sql)) {
             while ($row = $query->fetch_assoc()) {
-                $this->result[$row[$key]][] = $row;
+                $this->result[$row[$key]][] = $this->decodeJsonFields($row, $jsonFields);
             }
             $query->free();
             return $this->result;

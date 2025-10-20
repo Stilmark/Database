@@ -16,7 +16,7 @@ MySQLi functions, Query builder and Model instance.
     require('/vendor/autoload.php');
 
     use Symfony\Component\Dotenv\Dotenv;
-    use Stilmark\Parse\Dba;
+    use Stilmark\Database\Dba;
 
     $dotenv = new Dotenv();
     $dotenv->load(ROOT.'/.env');

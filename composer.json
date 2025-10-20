@@ -3,9 +3,8 @@
     "description": "PHP/Mysqli database connection and query builder.",
     "type": "package",
     "require": {
-        "php": ">=7",
-        "symfony/dotenv": "*",
-        "stilmark/parse": ">=v0.70"
+        "php": "^8.2",
+        "stilmark/base": "^1.3"
     },
     "license": "MIT",
     "authors": [

@@ -13,6 +13,7 @@ class User extends Dbi {
         'email'
     ];
     const hidden = ['password'];
+    const json = ['message'];
     const dates = [
         'created_at',
         'updated_at',

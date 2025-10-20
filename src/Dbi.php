@@ -25,6 +25,9 @@ class Dbi {
         if (defined('static::hidden')) {
             $dba->hidden(static::hidden);
         }
+        if (defined('static::json')) {
+            $dba->json(static::json);
+        }
         if (defined('static::dates')) {
             $dba->dates(static::dates);
             if ($dba->fillable) {
