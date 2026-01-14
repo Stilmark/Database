@@ -251,12 +251,16 @@ class Dba
                 unset($values[$column]);
                 continue;
             }
-            if (!in_array($value, ['NOW()','CURDATE()'])) {
+            if (!in_array($value, ['NOW()','CURDATE()','INCREMENT()', 'DECREMENT()'])) {
                if (!is_null($value)) {
                     $value = $this->sqli->val($value);
                 } else {
                     $value = 'null';
                 }
+            } elseif ($value === 'INCREMENT()') {
+                $value = $column.' + 1';
+            } elseif ($value === 'DECREMENT()') {
+                $value = $column.' - 1';
             }
             $values[$column] = $column.'='.$value;
         }

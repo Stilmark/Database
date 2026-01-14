@@ -10,7 +10,8 @@ class User extends Dbi {
     const fillable = [
         'firstName',
         'lastName',
-        'email'
+        'email',
+        'category_id'
     ];
     const hidden = ['password'];
     const json = ['message'];
