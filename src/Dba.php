@@ -150,6 +150,28 @@ class Dba
         return $this;
     }
 
+    function whereJsonContains($column, $value)
+    {
+        $this->where[] = [
+            'operator' => 'AND', 
+            'conditions' => [
+                $column => ['json_contains' => $value]
+            ]
+        ];
+        return $this;
+    }
+
+    function orWhereJsonContains($column, $value)
+    {
+        $this->where[] = [
+            'operator' => 'OR', 
+            'conditions' => [
+                $column => ['json_contains' => $value]
+            ]
+        ];
+        return $this;
+    }
+
     function setConditions($conditions)
     {
         if ($conditions) {
@@ -376,6 +398,14 @@ class Dba
                     }
 
                     $filter[] = (!strpos($column, '.') ? ($this->tableAlias ?? $this->table).'.':'').$column.' '.$operator.' '.$value;
+
+                } elseif (isset($value['json_contains'])) {
+                    // Handle JSON_CONTAINS operations
+                    $jsonValue = $value['json_contains'];
+                    if (!preg_match('/^[a-z_]+\(.*\)$/i', $jsonValue)) {
+                        $jsonValue = $this->sqli->val($jsonValue);
+                    }
+                    $filter[] = 'JSON_CONTAINS('.(!strpos($column, '.') ? ($this->tableAlias ?? $this->table).'.':'').$column.', '.$jsonValue.')';
 
                 } else {
 
